@@ -14,8 +14,10 @@ dependencies = [
     "pydantic>=2.0",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "pdoc"
+]
+
 [tool.hatch.build.targets.wheel]
 packages = ["idkollen_client"]
-
-[tool.pytest.ini_options]
-asyncio_mode = "auto"

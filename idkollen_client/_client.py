@@ -3,7 +3,16 @@ from __future__ import annotations
 import time
 import asyncio
 from dataclasses import dataclass
-from typing import Any, Literal, TypeVar
+from typing import TYPE_CHECKING, Any, Literal, TypeVar
+
+if TYPE_CHECKING:
+    from idkollen_client.endpoints.bankid_se import BankIdSeEndpoint, AsyncBankIdSeEndpoint
+    from idkollen_client.endpoints.bankid_no import BankIdNoEndpoint, AsyncBankIdNoEndpoint
+    from idkollen_client.endpoints.freja import FrejaEndpoint, AsyncFrejaEndpoint
+    from idkollen_client.endpoints.mitid import MitIdEndpoint, AsyncMitIdEndpoint
+    from idkollen_client.endpoints.ftn import FtnEndpoint, AsyncFtnEndpoint
+    from idkollen_client.endpoints.vipps import VippsEndpoint, AsyncVippsEndpoint
+    from idkollen_client.endpoints.document import DocumentEndpoint, AsyncDocumentEndpoint
 
 import httpx
 from pydantic import TypeAdapter
