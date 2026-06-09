@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from pydantic import TypeAdapter
 
 from idkollen_client._client import IdkollenError, PollOptions
+from idkollen_client.models.age_verification import AgeVerificationRequest, AgeVerificationStatus
 from idkollen_client.models.bankid_no import (
     BankIdNoAuthRequest,
     BankIdNoBackchannelAuthRequest,
@@ -18,6 +19,7 @@ if TYPE_CHECKING:
     from idkollen_client._client import IdkollenClient, AsyncIdkollenClient
 
 _status_adapter: TypeAdapter[BankIdNoStatus] = TypeAdapter(BankIdNoStatus)
+_age_adapter: TypeAdapter[AgeVerificationStatus] = TypeAdapter(AgeVerificationStatus)
 
 
 class BankIdNoEndpoint:
@@ -44,6 +46,26 @@ class BankIdNoEndpoint:
 
     def cancel_sign(self, id: str) -> None:
         return self._client._delete(f"/v3/bankid-no/sign/{id}")
+
+    def age_verification(self, req: AgeVerificationRequest) -> AgeVerificationStatus:
+        body = req.model_dump(mode="json", by_alias=True, exclude_none=True)
+        return self._client._post("/v3/bankid-no/age-verification", body, _age_adapter)
+
+    def age_verification_status(self, id: str) -> AgeVerificationStatus:
+        return self._client._get(f"/v3/bankid-no/age-verification/{id}", _age_adapter)
+
+    def cancel_age_verification(self, id: str) -> None:
+        return self._client._delete(f"/v3/bankid-no/age-verification/{id}")
+
+    def wait_for_age_verification(self, id: str, opts: PollOptions = PollOptions()) -> AgeVerificationStatus:
+        deadline = time.monotonic() + opts.timeout
+        while True:
+            status = self.age_verification_status(id)
+            if status.status != "PENDING":
+                return status
+            if time.monotonic() >= deadline:
+                raise IdkollenError("poll_timeout", 0, "Poll timed out")
+            time.sleep(opts.interval)
 
     def wait_for_auth(self, id: str, opts: PollOptions = PollOptions()) -> BankIdNoStatus:
         deadline = time.monotonic() + opts.timeout
@@ -90,6 +112,26 @@ class AsyncBankIdNoEndpoint:
 
     async def cancel_sign(self, id: str) -> None:
         return await self._client._delete(f"/v3/bankid-no/sign/{id}")
+
+    async def age_verification(self, req: AgeVerificationRequest) -> AgeVerificationStatus:
+        body = req.model_dump(mode="json", by_alias=True, exclude_none=True)
+        return await self._client._post("/v3/bankid-no/age-verification", body, _age_adapter)
+
+    async def age_verification_status(self, id: str) -> AgeVerificationStatus:
+        return await self._client._get(f"/v3/bankid-no/age-verification/{id}", _age_adapter)
+
+    async def cancel_age_verification(self, id: str) -> None:
+        return await self._client._delete(f"/v3/bankid-no/age-verification/{id}")
+
+    async def wait_for_age_verification(self, id: str, opts: PollOptions = PollOptions()) -> AgeVerificationStatus:
+        deadline = time.monotonic() + opts.timeout
+        while True:
+            status = await self.age_verification_status(id)
+            if status.status != "PENDING":
+                return status
+            if time.monotonic() >= deadline:
+                raise IdkollenError("poll_timeout", 0, "Poll timed out")
+            await asyncio.sleep(opts.interval)
 
     async def wait_for_auth(self, id: str, opts: PollOptions = PollOptions()) -> BankIdNoStatus:
         deadline = time.monotonic() + opts.timeout

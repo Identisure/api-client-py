@@ -1,3 +1,4 @@
+from idkollen_client import endpoints, models
 from idkollen_client._client import (
     AsyncIdkollenClient,
     IdkollenClient,
@@ -13,4 +14,6 @@ __all__ = [
     "IdkollenClientBuilder",
     "IdkollenError",
     "PollOptions",
+    "endpoints",
+    "models",
 ]
