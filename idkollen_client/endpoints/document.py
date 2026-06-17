@@ -18,13 +18,10 @@ class DocumentEndpoint:
 
     def upload(self, data: bytes, filename: str, mime_type: str = "application/pdf") -> DocumentUploadResponse:
         files = {"file": (filename, data, mime_type)}
-        return self._client._post_multipart("/document", files, _upload_adapter)
+        return self._client._post_multipart("/v3/document", files, _upload_adapter)
 
     def download(self, id: str) -> bytes:
-        return self._client._get_bytes(f"/document/{id}")
-
-    def delete(self, id: str) -> None:
-        return self._client._delete(f"/document/{id}")
+        return self._client._get_bytes(f"/v3/document/{id}")
 
 
 class AsyncDocumentEndpoint:
@@ -33,10 +30,7 @@ class AsyncDocumentEndpoint:
 
     async def upload(self, data: bytes, filename: str, mime_type: str = "application/pdf") -> DocumentUploadResponse:
         files = {"file": (filename, data, mime_type)}
-        return await self._client._post_multipart("/document", files, _upload_adapter)
+        return await self._client._post_multipart("/v3/document", files, _upload_adapter)
 
     async def download(self, id: str) -> bytes:
-        return await self._client._get_bytes(f"/document/{id}")
-
-    async def delete(self, id: str) -> None:
-        return await self._client._delete(f"/document/{id}")
+        return await self._client._get_bytes(f"/v3/document/{id}")
