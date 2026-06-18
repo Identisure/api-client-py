@@ -42,7 +42,7 @@ class VippsCompleted(_Base):
     status: Literal["COMPLETED"]
     id: str
     ref_id: Optional[str] = None
-    ssn: str
+    ssn: Optional[str] = None
     name: str
     given_name: str
     surname: str
