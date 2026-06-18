@@ -32,10 +32,6 @@ class BankIdNoSignRequest(_Base):
     redirect_url: Optional[str] = None
     text: Optional[str] = None
     documents: Optional[list[str]] = None
-    request_ssn: Optional[bool] = None
-    request_phone: Optional[bool] = None
-    request_email: Optional[bool] = None
-    request_address: Optional[bool] = None
     ref_id: Optional[str] = None
 
 
