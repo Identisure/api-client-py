@@ -57,7 +57,7 @@ class IdkollenClientBuilder:
         return self
 
     def base_url(self, url: str) -> IdkollenClientBuilder:
-        self._base_url = url
+        self._base_url = url.rstrip("/")
         return self
 
     def user_agent(self, ua: str) -> IdkollenClientBuilder:
