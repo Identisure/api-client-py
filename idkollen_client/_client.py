@@ -36,7 +36,7 @@ class IdkollenError(Exception):
         self.message = message
 
 
-@dataclass
+@dataclass(frozen=True)
 class PollOptions:
     interval: float = 2.0
     timeout: float = 300.0
