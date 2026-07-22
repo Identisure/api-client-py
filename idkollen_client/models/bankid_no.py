@@ -70,6 +70,8 @@ class BankIdNoCompleted(_Base):
     bank_id: Optional[str] = None
     sign_result: Optional[BankIdNoSignResult] = None
     signed_documents: Optional[list[BankIdNoSignedDocument]] = None
+    authenticated_at: Optional[str] = None
+    signed_at: Optional[str] = None
 
 
 class BankIdNoFailed(_Base):

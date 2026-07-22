@@ -73,6 +73,8 @@ class FrejaCompleted(_Base):
     surname: str
     address: Optional[str] = None
     company_signatory_text: Optional[str] = None
+    authenticated_at: Optional[str] = None
+    signed_at: Optional[str] = None
 
 
 class FrejaFailed(_Base):

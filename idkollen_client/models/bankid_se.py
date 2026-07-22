@@ -83,6 +83,8 @@ class BankIdSeCompleted(_Base):
     cert_start_date: Optional[str] = None
     address: Optional[str] = None
     company_signatory_text: Optional[str] = None
+    authenticated_at: Optional[str] = None
+    signed_at: Optional[str] = None
 
 
 class BankIdSeFailed(_Base):

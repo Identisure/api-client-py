@@ -41,6 +41,8 @@ class FtnCompleted(_Base):
     birth_date: Optional[str] = None
     pid: Optional[str] = None
     bank_id: Optional[str] = None
+    bank_name: Optional[str] = None
+    authenticated_at: Optional[str] = None
 
 
 class FtnFailed(_Base):

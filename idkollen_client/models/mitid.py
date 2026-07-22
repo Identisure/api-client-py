@@ -61,6 +61,8 @@ class MitIdCompleted(_Base):
     pid: Optional[str] = None
     bank_id: Optional[str] = None
     sign_result: Optional[MitIdSignResult] = None
+    authenticated_at: Optional[str] = None
+    signed_at: Optional[str] = None
 
 
 class MitIdFailed(_Base):

@@ -52,6 +52,7 @@ class VippsCompleted(_Base):
     birth_date: Optional[str] = None
     pid: Optional[str] = None
     bank_id: Optional[str] = None
+    authenticated_at: Optional[str] = None
 
 
 class VippsFailed(_Base):
