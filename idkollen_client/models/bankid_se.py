@@ -72,6 +72,16 @@ class BankIdSePending(_Base):
     hint_code: Optional[str] = None
 
 
+class BankIdSeDevice(_Base):
+    ip_address: Optional[str] = None
+    uhi: Optional[str] = None
+
+
+class BankIdSeStepUp(_Base):
+    mrtd: Optional[bool] = None
+    face: Optional[bool] = None
+
+
 class BankIdSeCompleted(_Base):
     status: Literal["COMPLETED"]
     id: str
@@ -81,6 +91,10 @@ class BankIdSeCompleted(_Base):
     given_name: str
     surname: str
     cert_start_date: Optional[str] = None
+    ocsp_response: str
+    risk: Optional[str] = None
+    device: Optional[BankIdSeDevice] = None
+    step_up: Optional[BankIdSeStepUp] = None
     address: Optional[str] = None
     company_signatory_text: Optional[str] = None
     authenticated_at: Optional[str] = None
