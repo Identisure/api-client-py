@@ -95,6 +95,15 @@ class IdkollenClient:
         self._user_agent = user_agent
         self._http = httpx.Client(timeout=30.0)
 
+    def close(self) -> None:
+        self._http.close()
+
+    def __enter__(self) -> IdkollenClient:
+        return self
+
+    def __exit__(self, *exc_info: object) -> None:
+        self.close()
+
     def _headers(self) -> dict[str, str]:
         return {"User-Agent": self._user_agent}
 
@@ -203,6 +212,15 @@ class AsyncIdkollenClient:
         self._client_secret = client_secret
         self._user_agent = user_agent
         self._http = httpx.AsyncClient(timeout=30.0)
+
+    async def aclose(self) -> None:
+        await self._http.aclose()
+
+    async def __aenter__(self) -> AsyncIdkollenClient:
+        return self
+
+    async def __aexit__(self, *exc_info: object) -> None:
+        await self.aclose()
 
     def _headers(self) -> dict[str, str]:
         return {"User-Agent": self._user_agent}

@@ -31,12 +31,11 @@ pip install idkollen-client
 ```python
 from idkollen_client import IdkollenClientBuilder, BankIdSeAuthRequest, PollOptions
 
-client = IdkollenClientBuilder("client_id", "client_secret") \
-    .environment("staging") \
-    .build()
-
-session = client.bankid_se().auth(BankIdSeAuthRequest())
-result = client.bankid_se().wait_for_auth(session.id, PollOptions())
+with IdkollenClientBuilder("client_id", "client_secret") \
+        .environment("staging") \
+        .build() as client:
+    session = client.bankid_se().auth(BankIdSeAuthRequest())
+    result = client.bankid_se().wait_for_auth(session.id, PollOptions())
 
 print(result)
 ```
@@ -48,12 +47,11 @@ import asyncio
 from idkollen_client import IdkollenClientBuilder, BankIdSeAuthRequest, PollOptions
 
 async def main():
-    client = IdkollenClientBuilder("client_id", "client_secret") \
-        .environment("staging") \
-        .build_async()
-
-    session = await client.bankid_se().auth(BankIdSeAuthRequest())
-    result = await client.bankid_se().wait_for_auth(session.id, PollOptions())
+    async with IdkollenClientBuilder("client_id", "client_secret") \
+            .environment("staging") \
+            .build_async() as client:
+        session = await client.bankid_se().auth(BankIdSeAuthRequest())
+        result = await client.bankid_se().wait_for_auth(session.id, PollOptions())
 
     print(result)
 
