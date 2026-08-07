@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import Annotated, Literal, Optional
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Discriminator, Tag
 from pydantic.alias_generators import to_camel
 
-from idkollen_client.models.common import ApiErrorCode
+from idkollen_client.models.common import ApiErrorCode, UnknownStatus, status_tag
 
 
 class _Base(BaseModel):
@@ -73,6 +73,9 @@ class MitIdFailed(_Base):
 
 
 MitIdStatus = Annotated[
-    MitIdPending | MitIdCompleted | MitIdFailed,
-    Field(discriminator="status"),
+    Annotated[MitIdPending, Tag("PENDING")]
+    | Annotated[MitIdCompleted, Tag("COMPLETED")]
+    | Annotated[MitIdFailed, Tag("FAILED")]
+    | Annotated[UnknownStatus, Tag("UNKNOWN")],
+    Discriminator(status_tag),
 ]

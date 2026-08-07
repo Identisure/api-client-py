@@ -1,4 +1,4 @@
-from idkollen_client.models.common import ApiErrorCode, CallInitiator, Country, Language
+from idkollen_client.models.common import ApiErrorCode, CallInitiator, Country, Language, UnknownStatus
 from idkollen_client.models.age_verification import (
     AgeVerificationCompleted,
     AgeVerificationFailed,
@@ -70,7 +70,7 @@ from idkollen_client.models.vipps import (
 from idkollen_client.models.document import DocumentUploadResponse
 
 __all__ = [
-    "ApiErrorCode", "CallInitiator", "Country", "Language",
+    "ApiErrorCode", "CallInitiator", "Country", "Language", "UnknownStatus",
     "AgeVerificationCompleted", "AgeVerificationFailed", "AgeVerificationPending",
     "AgeVerificationRequest", "AgeVerificationStatus",
     "BankIdSeAuthRequest", "BankIdSeCompleted", "BankIdSeDevice", "BankIdSeFailed", "BankIdSePending",

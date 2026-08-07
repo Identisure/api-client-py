@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import Annotated, Literal, Optional
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Discriminator, Tag
 from pydantic.alias_generators import to_camel
 
-from idkollen_client.models.common import ApiErrorCode
+from idkollen_client.models.common import ApiErrorCode, UnknownStatus, status_tag
 
 
 class _Base(BaseModel):
@@ -41,6 +41,9 @@ class AgeVerificationFailed(_Base):
 
 
 AgeVerificationStatus = Annotated[
-    AgeVerificationPending | AgeVerificationCompleted | AgeVerificationFailed,
-    Field(discriminator="status"),
+    Annotated[AgeVerificationPending, Tag("PENDING")]
+    | Annotated[AgeVerificationCompleted, Tag("COMPLETED")]
+    | Annotated[AgeVerificationFailed, Tag("FAILED")]
+    | Annotated[UnknownStatus, Tag("UNKNOWN")],
+    Discriminator(status_tag),
 ]

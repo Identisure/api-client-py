@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import Annotated, Literal, Optional
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Discriminator, Tag
 from pydantic.alias_generators import to_camel
 
-from idkollen_client.models.common import ApiErrorCode, Country
+from idkollen_client.models.common import ApiErrorCode, Country, UnknownStatus, status_tag
 
 FrejaRegistrationLevel = Literal["EXTENDED", "PLUS"]
 
@@ -85,6 +85,9 @@ class FrejaFailed(_Base):
 
 
 FrejaStatus = Annotated[
-    FrejaPending | FrejaCompleted | FrejaFailed,
-    Field(discriminator="status"),
+    Annotated[FrejaPending, Tag("PENDING")]
+    | Annotated[FrejaCompleted, Tag("COMPLETED")]
+    | Annotated[FrejaFailed, Tag("FAILED")]
+    | Annotated[UnknownStatus, Tag("UNKNOWN")],
+    Discriminator(status_tag),
 ]
