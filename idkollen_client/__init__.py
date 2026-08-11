@@ -6,6 +6,7 @@ from idkollen_client._client import (
     IdkollenError,
     PollOptions,
 )
+from idkollen_client._callback import verify_callback_signature
 from idkollen_client.models import *  # noqa: F401, F403
 
 __all__ = [
@@ -16,4 +17,5 @@ __all__ = [
     "PollOptions",
     "endpoints",
     "models",
+    "verify_callback_signature",
 ]

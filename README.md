@@ -58,6 +58,16 @@ async def main():
 asyncio.run(main())
 ```
 
+### Verifying callbacks
+
+Pass the raw request body exactly as received, before parsing it.
+
+```python
+from idkollen_client import verify_callback_signature
+
+valid = verify_callback_signature(raw_body, headers["X-Signature-SHA256"], hmac_secret)
+```
+
 ## Development
 
 #### Prerequisites
