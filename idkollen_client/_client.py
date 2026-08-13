@@ -48,6 +48,7 @@ class IdkollenClientBuilder:
         self._client_secret = client_secret
         self._base_url: str | None = None
         self._user_agent = "idkollen-client-py/0.1.0"
+        self._timeout = 30.0
 
     def environment(self, env: Literal["production", "staging"]) -> IdkollenClientBuilder:
         if env == "staging":
@@ -64,12 +65,18 @@ class IdkollenClientBuilder:
         self._user_agent = ua
         return self
 
+    def timeout(self, seconds: float) -> IdkollenClientBuilder:
+        """Set the timeout for each HTTP request, in seconds. Must be positive. Default: 30."""
+        self._timeout = seconds
+        return self
+
     def build(self) -> IdkollenClient:
         return IdkollenClient(
             base_url=self._base_url or _PRODUCTION_URL,
             client_id=self._client_id,
             client_secret=self._client_secret,
             user_agent=self._user_agent,
+            timeout=self._timeout,
         )
 
     def build_async(self) -> AsyncIdkollenClient:
@@ -78,6 +85,7 @@ class IdkollenClientBuilder:
             client_id=self._client_id,
             client_secret=self._client_secret,
             user_agent=self._user_agent,
+            timeout=self._timeout,
         )
 
 
@@ -88,12 +96,13 @@ class IdkollenClient:
         client_id: str,
         client_secret: str,
         user_agent: str,
+        timeout: float,
     ) -> None:
         self._base_url = base_url
         self._client_id = client_id
         self._client_secret = client_secret
         self._user_agent = user_agent
-        self._http = httpx.Client(timeout=30.0)
+        self._http = httpx.Client(timeout=timeout)
 
     def close(self) -> None:
         self._http.close()
@@ -206,12 +215,13 @@ class AsyncIdkollenClient:
         client_id: str,
         client_secret: str,
         user_agent: str,
+        timeout: float,
     ) -> None:
         self._base_url = base_url
         self._client_id = client_id
         self._client_secret = client_secret
         self._user_agent = user_agent
-        self._http = httpx.AsyncClient(timeout=30.0)
+        self._http = httpx.AsyncClient(timeout=timeout)
 
     async def aclose(self) -> None:
         await self._http.aclose()
