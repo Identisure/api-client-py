@@ -16,7 +16,8 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "pdoc"
+    "pdoc",
+    "pytest>=9.1",
 ]
 
 [tool.hatch.build.targets.wheel]
