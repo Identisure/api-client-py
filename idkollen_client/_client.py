@@ -152,7 +152,7 @@ class IdkollenClient:
         except httpx.HTTPError as exc:
             raise IdkollenError("http", 0, str(exc)) from exc
         if not resp.is_success:
-            raise IdkollenError("api", resp.status_code, resp.text)
+            raise IdkollenError("api", resp.status_code, _error_message(resp))
 
     def _post_multipart(self, path: str, files: dict[str, Any], adapter: TypeAdapter[T]) -> T:
         try:
@@ -176,7 +176,7 @@ class IdkollenClient:
         except httpx.HTTPError as exc:
             raise IdkollenError("http", 0, str(exc)) from exc
         if not resp.is_success:
-            raise IdkollenError("api", resp.status_code, resp.text)
+            raise IdkollenError("api", resp.status_code, _error_message(resp))
         return resp.content
 
     def bankid_se(self) -> "BankIdSeEndpoint":
@@ -271,7 +271,7 @@ class AsyncIdkollenClient:
         except httpx.HTTPError as exc:
             raise IdkollenError("http", 0, str(exc)) from exc
         if not resp.is_success:
-            raise IdkollenError("api", resp.status_code, resp.text)
+            raise IdkollenError("api", resp.status_code, _error_message(resp))
 
     async def _post_multipart(self, path: str, files: dict[str, Any], adapter: TypeAdapter[T]) -> T:
         try:
@@ -295,7 +295,7 @@ class AsyncIdkollenClient:
         except httpx.HTTPError as exc:
             raise IdkollenError("http", 0, str(exc)) from exc
         if not resp.is_success:
-            raise IdkollenError("api", resp.status_code, resp.text)
+            raise IdkollenError("api", resp.status_code, _error_message(resp))
         return resp.content
 
     def bankid_se(self) -> "AsyncBankIdSeEndpoint":
@@ -333,4 +333,14 @@ def _parse_response(resp: httpx.Response, adapter: TypeAdapter[T]) -> T:
             return adapter.validate_json(resp.content)
         except Exception as exc:
             raise IdkollenError("json", 0, str(exc)) from exc
-    raise IdkollenError("api", resp.status_code, resp.text)
+    raise IdkollenError("api", resp.status_code, _error_message(resp))
+
+
+def _error_message(resp: httpx.Response) -> str:
+    try:
+        body = resp.json()
+    except ValueError:
+        return resp.text
+    if isinstance(body, dict) and isinstance(body.get("message"), str):
+        return body["message"]
+    return resp.text

@@ -237,7 +237,7 @@ def test_api_error(server: MockServer) -> None:
 
     assert info.value.code == "api"
     assert info.value.status == 400
-    assert "Invalid request" in info.value.message
+    assert info.value.message == "Invalid request"
 
 
 def test_async_auth_completes(server: MockServer) -> None:
