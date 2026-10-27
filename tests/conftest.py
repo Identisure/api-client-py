@@ -10,7 +10,7 @@ from typing import Any
 
 import pytest
 
-FIXTURES = Path(__file__).resolve().parents[2] / "fixtures"
+FIXTURES = Path(__file__).resolve().parents[1] / "fixtures"
 
 
 def fixture_text(name: str) -> str:

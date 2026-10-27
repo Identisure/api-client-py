@@ -1,4 +1,4 @@
-<img align="left" height="100" style="margin-right: 10px;" src="../img/icon.png">
+<img align="left" height="100" style="margin-right: 10px;" src="img/icon.png">
 
 # Identisure Python Client
 
@@ -12,7 +12,7 @@
 [downloads-image]: https://img.shields.io/pypi/dm/identisure-client?style=flat-square
 [downloads-url]: https://pypi.org/project/identisure-client/
 [docs-image]: https://img.shields.io/badge/github-docs-orange?logo=github&style=flat-square
-[docs-url]: https://identisure.github.io/idk-clients/py
+[docs-url]: https://identisure.github.io/api-client-py
 [license-image]: https://img.shields.io/badge/license-MIT-blue?style=flat-square
 [license-url]: https://opensource.org/license/mit
 
@@ -76,9 +76,26 @@ valid = verify_callback_signature(raw_body, headers["X-Signature-SHA256"], hmac_
 
 * [Python 3.10+](https://www.python.org/)
 * [uv](https://docs.astral.sh/uv/)
+* [just](https://just.systems/)
+
+#### Clone
+
+The test fixtures live in a git submodule, so clone with `--recurse-submodules` (or run `git submodule update --init` in an existing clone).
+
+```sh
+git clone --recurse-submodules https://github.com/identisure/api-client-py.git
+```
 
 #### Install dependencies
 
 ```sh
 uv sync --extra dev
+```
+
+#### Build, test and lint
+
+```sh
+just build
+just test
+just check
 ```
