@@ -31,9 +31,7 @@ pip install identisure-client
 ```python
 from identisure_client import IdentisureClientBuilder, BankIdSeAuthRequest, PollOptions
 
-with IdentisureClientBuilder("client_id", "client_secret") \
-        .environment("staging") \
-        .build() as client:
+with IdentisureClientBuilder("client_id", "client_secret").environment("staging").build() as client:
     session = client.bankid_se().auth(BankIdSeAuthRequest())
     result = client.bankid_se().wait_for_auth(session.id, PollOptions())
 
@@ -46,14 +44,18 @@ print(result)
 import asyncio
 from identisure_client import IdentisureClientBuilder, BankIdSeAuthRequest, PollOptions
 
+
 async def main():
-    async with IdentisureClientBuilder("client_id", "client_secret") \
-            .environment("staging") \
-            .build_async() as client:
+    async with (
+        IdentisureClientBuilder("client_id", "client_secret")
+        .environment("staging")
+        .build_async() as client
+    ):
         session = await client.bankid_se().auth(BankIdSeAuthRequest())
         result = await client.bankid_se().wait_for_auth(session.id, PollOptions())
 
     print(result)
+
 
 asyncio.run(main())
 ```

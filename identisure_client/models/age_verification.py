@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Annotated, Literal, Optional
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Discriminator, Tag
 from pydantic.alias_generators import to_camel
@@ -13,19 +13,19 @@ class _Base(BaseModel):
 
 
 class AgeVerificationRequest(_Base):
-    min_age: Optional[int] = None
-    max_age: Optional[int] = None
-    ref_id: Optional[str] = None
-    callback_url: Optional[str] = None
-    redirect_url: Optional[str] = None
+    min_age: int | None = None
+    max_age: int | None = None
+    ref_id: str | None = None
+    callback_url: str | None = None
+    redirect_url: str | None = None
 
 
 class AgeVerificationPending(_Base):
     status: Literal["PENDING"]
     id: str
-    url: Optional[str] = None
-    min_age: Optional[int] = None
-    max_age: Optional[int] = None
+    url: str | None = None
+    min_age: int | None = None
+    max_age: int | None = None
 
 
 class AgeVerificationCompleted(_Base):

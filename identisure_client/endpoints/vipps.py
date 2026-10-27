@@ -1,29 +1,41 @@
 from __future__ import annotations
 
-import time
 import asyncio
+import time
 from typing import TYPE_CHECKING
 
 from pydantic import TypeAdapter
 
 from identisure_client._client import IdentisureError, PollOptions
-from identisure_client.models.vipps import VippsAuthRequest, VippsBackchannelAuthRequest, VippsStatus
+from identisure_client.models.vipps import (
+    VippsAuthRequest,
+    VippsBackchannelAuthRequest,
+    VippsStatus,
+)
 
 if TYPE_CHECKING:
-    from identisure_client._client import IdentisureClient, AsyncIdentisureClient
+    from identisure_client._client import AsyncIdentisureClient, IdentisureClient
 
 _status_adapter: TypeAdapter[VippsStatus] = TypeAdapter(VippsStatus)
 
 
 class VippsEndpoint:
-    def __init__(self, client: "IdentisureClient") -> None:
+    def __init__(self, client: IdentisureClient) -> None:
         self._client = client
 
     def auth(self, req: VippsAuthRequest) -> VippsStatus:
-        return self._client._post("/v3/vipps/auth", req.model_dump(mode="json", by_alias=True, exclude_none=True), _status_adapter)
+        return self._client._post(
+            "/v3/vipps/auth",
+            req.model_dump(mode="json", by_alias=True, exclude_none=True),
+            _status_adapter,
+        )
 
     def backchannel_auth(self, req: VippsBackchannelAuthRequest) -> VippsStatus:
-        return self._client._post("/v3/vipps/backchannel/auth", req.model_dump(mode="json", by_alias=True, exclude_none=True), _status_adapter)
+        return self._client._post(
+            "/v3/vipps/backchannel/auth",
+            req.model_dump(mode="json", by_alias=True, exclude_none=True),
+            _status_adapter,
+        )
 
     def auth_status(self, id: str) -> VippsStatus:
         return self._client._get(f"/v3/vipps/auth/{id}", _status_adapter)
@@ -43,14 +55,22 @@ class VippsEndpoint:
 
 
 class AsyncVippsEndpoint:
-    def __init__(self, client: "AsyncIdentisureClient") -> None:
+    def __init__(self, client: AsyncIdentisureClient) -> None:
         self._client = client
 
     async def auth(self, req: VippsAuthRequest) -> VippsStatus:
-        return await self._client._post("/v3/vipps/auth", req.model_dump(mode="json", by_alias=True, exclude_none=True), _status_adapter)
+        return await self._client._post(
+            "/v3/vipps/auth",
+            req.model_dump(mode="json", by_alias=True, exclude_none=True),
+            _status_adapter,
+        )
 
     async def backchannel_auth(self, req: VippsBackchannelAuthRequest) -> VippsStatus:
-        return await self._client._post("/v3/vipps/backchannel/auth", req.model_dump(mode="json", by_alias=True, exclude_none=True), _status_adapter)
+        return await self._client._post(
+            "/v3/vipps/backchannel/auth",
+            req.model_dump(mode="json", by_alias=True, exclude_none=True),
+            _status_adapter,
+        )
 
     async def auth_status(self, id: str) -> VippsStatus:
         return await self._client._get(f"/v3/vipps/auth/{id}", _status_adapter)

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Annotated, Literal, Optional
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Discriminator, Tag
 from pydantic.alias_generators import to_camel
@@ -13,49 +13,49 @@ class _Base(BaseModel):
 
 
 class BankIdSeAuthRequest(_Base):
-    ssn: Optional[str] = None
-    ip_address: Optional[str] = None
-    callback_url: Optional[str] = None
-    pin_required: Optional[bool] = None
-    intent: Optional[str] = None
-    org_number: Optional[str] = None
-    request_address: Optional[bool] = None
-    ref_id: Optional[str] = None
+    ssn: str | None = None
+    ip_address: str | None = None
+    callback_url: str | None = None
+    pin_required: bool | None = None
+    intent: str | None = None
+    org_number: str | None = None
+    request_address: bool | None = None
+    ref_id: str | None = None
 
 
 class BankIdSePhoneAuthRequest(_Base):
     ssn: str
     call_initiator: CallInitiator
-    callback_url: Optional[str] = None
-    pin_required: Optional[bool] = None
-    intent: Optional[str] = None
-    org_number: Optional[str] = None
-    request_address: Optional[bool] = None
-    ref_id: Optional[str] = None
+    callback_url: str | None = None
+    pin_required: bool | None = None
+    intent: str | None = None
+    org_number: str | None = None
+    request_address: bool | None = None
+    ref_id: str | None = None
 
 
 class BankIdSeSignRequest(_Base):
     text: str
-    ssn: Optional[str] = None
-    ip_address: Optional[str] = None
-    callback_url: Optional[str] = None
-    pin_required: Optional[bool] = None
-    digest: Optional[str] = None
-    org_number: Optional[str] = None
-    request_address: Optional[bool] = None
-    ref_id: Optional[str] = None
+    ssn: str | None = None
+    ip_address: str | None = None
+    callback_url: str | None = None
+    pin_required: bool | None = None
+    digest: str | None = None
+    org_number: str | None = None
+    request_address: bool | None = None
+    ref_id: str | None = None
 
 
 class BankIdSePhoneSignRequest(_Base):
     ssn: str
     call_initiator: CallInitiator
     text: str
-    callback_url: Optional[str] = None
-    pin_required: Optional[bool] = None
-    digest: Optional[str] = None
-    org_number: Optional[str] = None
-    request_address: Optional[bool] = None
-    ref_id: Optional[str] = None
+    callback_url: str | None = None
+    pin_required: bool | None = None
+    digest: str | None = None
+    org_number: str | None = None
+    request_address: bool | None = None
+    ref_id: str | None = None
 
 
 class BankIdSeVerifyRequest(_Base):
@@ -65,46 +65,46 @@ class BankIdSeVerifyRequest(_Base):
 class BankIdSePending(_Base):
     status: Literal["PENDING"]
     id: str
-    ref_id: Optional[str] = None
-    auto_start_token: Optional[str] = None
-    qr_start_token: Optional[str] = None
-    qr_start_secret: Optional[str] = None
-    hint_code: Optional[str] = None
+    ref_id: str | None = None
+    auto_start_token: str | None = None
+    qr_start_token: str | None = None
+    qr_start_secret: str | None = None
+    hint_code: str | None = None
 
 
 class BankIdSeDevice(_Base):
-    ip_address: Optional[str] = None
-    uhi: Optional[str] = None
+    ip_address: str | None = None
+    uhi: str | None = None
 
 
 class BankIdSeStepUp(_Base):
-    mrtd: Optional[bool] = None
-    face: Optional[bool] = None
+    mrtd: bool | None = None
+    face: bool | None = None
 
 
 class BankIdSeCompleted(_Base):
     status: Literal["COMPLETED"]
     id: str
-    ref_id: Optional[str] = None
+    ref_id: str | None = None
     ssn: str
     name: str
     given_name: str
     surname: str
-    cert_start_date: Optional[str] = None
+    cert_start_date: str | None = None
     ocsp_response: str
-    risk: Optional[str] = None
-    device: Optional[BankIdSeDevice] = None
-    step_up: Optional[BankIdSeStepUp] = None
-    address: Optional[str] = None
-    company_signatory_text: Optional[str] = None
-    authenticated_at: Optional[str] = None
-    signed_at: Optional[str] = None
+    risk: str | None = None
+    device: BankIdSeDevice | None = None
+    step_up: BankIdSeStepUp | None = None
+    address: str | None = None
+    company_signatory_text: str | None = None
+    authenticated_at: str | None = None
+    signed_at: str | None = None
 
 
 class BankIdSeFailed(_Base):
     status: Literal["FAILED"]
     id: str
-    ref_id: Optional[str] = None
+    ref_id: str | None = None
     error: ApiErrorCode
 
 
@@ -122,5 +122,5 @@ class BankIdSeVerifyResponse(_Base):
     name: str
     given_name: str
     surname: str
-    age: Optional[int] = None
-    verified_at: Optional[str] = None
+    age: int | None = None
+    verified_at: str | None = None

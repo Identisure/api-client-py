@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Annotated, Literal, Optional
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Discriminator, Tag
 from pydantic.alias_generators import to_camel
@@ -13,52 +13,52 @@ class _Base(BaseModel):
 
 
 class VippsAuthRequest(_Base):
-    redirect_url: Optional[str] = None
-    request_ssn: Optional[bool] = None
-    request_phone: Optional[bool] = None
-    request_email: Optional[bool] = None
-    request_address: Optional[bool] = None
-    ref_id: Optional[str] = None
-    app_callback_uri: Optional[str] = None
+    redirect_url: str | None = None
+    request_ssn: bool | None = None
+    request_phone: bool | None = None
+    request_email: bool | None = None
+    request_address: bool | None = None
+    ref_id: str | None = None
+    app_callback_uri: str | None = None
 
 
 class VippsBackchannelAuthRequest(_Base):
     phone: str
-    request_ssn: Optional[bool] = None
-    request_email: Optional[bool] = None
-    request_address: Optional[bool] = None
-    callback_url: Optional[str] = None
-    ref_id: Optional[str] = None
+    request_ssn: bool | None = None
+    request_email: bool | None = None
+    request_address: bool | None = None
+    callback_url: str | None = None
+    ref_id: str | None = None
 
 
 class VippsPending(_Base):
     status: Literal["PENDING"]
     id: str
-    ref_id: Optional[str] = None
-    url: Optional[str] = None
+    ref_id: str | None = None
+    url: str | None = None
 
 
 class VippsCompleted(_Base):
     status: Literal["COMPLETED"]
     id: str
-    ref_id: Optional[str] = None
-    ssn: Optional[str] = None
+    ref_id: str | None = None
+    ssn: str | None = None
     name: str
     given_name: str
     surname: str
-    phone: Optional[str] = None
-    email: Optional[str] = None
-    address: Optional[str] = None
-    birth_date: Optional[str] = None
-    pid: Optional[str] = None
-    bank_id: Optional[str] = None
-    authenticated_at: Optional[str] = None
+    phone: str | None = None
+    email: str | None = None
+    address: str | None = None
+    birth_date: str | None = None
+    pid: str | None = None
+    bank_id: str | None = None
+    authenticated_at: str | None = None
 
 
 class VippsFailed(_Base):
     status: Literal["FAILED"]
     id: str
-    ref_id: Optional[str] = None
+    ref_id: str | None = None
     error: ApiErrorCode
 
 

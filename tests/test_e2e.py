@@ -2,18 +2,20 @@ from __future__ import annotations
 
 import asyncio
 import base64
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Callable
+from typing import Any
 
 import pytest
+from conftest import MockServer, fixture
 from pydantic import BaseModel
 
-from conftest import MockServer, fixture
 from identisure_client import IdentisureClientBuilder, IdentisureError, PollOptions
 from identisure_client._client import AsyncIdentisureClient, IdentisureClient
 from identisure_client.models import (
     AgeVerificationCompleted,
     AgeVerificationFailed,
+    AgeVerificationPending,
     AgeVerificationRequest,
     BankIdNoAuthRequest,
     BankIdNoCompleted,
@@ -22,6 +24,7 @@ from identisure_client.models import (
     BankIdSeAuthRequest,
     BankIdSeCompleted,
     BankIdSeFailed,
+    BankIdSePending,
     BankIdSePhoneAuthRequest,
     BankIdSeSignRequest,
     BankIdSeVerifyRequest,
@@ -60,14 +63,42 @@ class Provider:
 
 
 PROVIDERS = [
-    Provider("bankid_se", "bankid-se", lambda c: c.bankid_se(), BankIdSeAuthRequest, BankIdSeCompleted,
-             BankIdSeFailed, lambda: BankIdSeSignRequest(text="Sign this")),
-    Provider("bankid_no", "bankid-no", lambda c: c.bankid_no(), BankIdNoAuthRequest, BankIdNoCompleted,
-             BankIdNoFailed, lambda: BankIdNoSignRequest(text="Sign this")),
-    Provider("freja", "freja", lambda c: c.freja(), FrejaAuthRequest, FrejaCompleted,
-             FrejaFailed, lambda: FrejaSignRequest(text="Sign this")),
-    Provider("mitid", "mitid", lambda c: c.mitid(), MitIdAuthRequest, MitIdCompleted,
-             MitIdFailed, lambda: MitIdSignRequest(text="Sign this")),
+    Provider(
+        "bankid_se",
+        "bankid-se",
+        lambda c: c.bankid_se(),
+        BankIdSeAuthRequest,
+        BankIdSeCompleted,
+        BankIdSeFailed,
+        lambda: BankIdSeSignRequest(text="Sign this"),
+    ),
+    Provider(
+        "bankid_no",
+        "bankid-no",
+        lambda c: c.bankid_no(),
+        BankIdNoAuthRequest,
+        BankIdNoCompleted,
+        BankIdNoFailed,
+        lambda: BankIdNoSignRequest(text="Sign this"),
+    ),
+    Provider(
+        "freja",
+        "freja",
+        lambda c: c.freja(),
+        FrejaAuthRequest,
+        FrejaCompleted,
+        FrejaFailed,
+        lambda: FrejaSignRequest(text="Sign this"),
+    ),
+    Provider(
+        "mitid",
+        "mitid",
+        lambda c: c.mitid(),
+        MitIdAuthRequest,
+        MitIdCompleted,
+        MitIdFailed,
+        lambda: MitIdSignRequest(text="Sign this"),
+    ),
     Provider("ftn", "ftn", lambda c: c.ftn(), FtnAuthRequest, FtnCompleted, FtnFailed),
     Provider("vipps", "vipps", lambda c: c.vipps(), VippsAuthRequest, VippsCompleted, VippsFailed),
 ]
@@ -168,7 +199,10 @@ def test_bankid_se_phone_auth_completes(server: MockServer) -> None:
     server.enqueue(200, "bankid_se/auth_completed.json")
 
     with client(server) as c:
-        session = c.bankid_se().phone_auth(BankIdSePhoneAuthRequest(ssn="199001011239", call_initiator="USER"))
+        session = c.bankid_se().phone_auth(
+            BankIdSePhoneAuthRequest(ssn="199001011239", call_initiator="USER")
+        )
+        assert isinstance(session, BankIdSePending)
         result = c.bankid_se().wait_for_auth(session.id, POLL)
 
     assert as_json(session) == without_nulls(fixture("bankid_se/phone_auth_pending.json"))
@@ -192,7 +226,11 @@ def test_bankid_se_verify(server: MockServer) -> None:
 
 @pytest.mark.parametrize(
     ("final", "expected"),
-    [("completed", AgeVerificationCompleted), ("failed", AgeVerificationFailed), ("unknown", UnknownStatus)],
+    [
+        ("completed", AgeVerificationCompleted),
+        ("failed", AgeVerificationFailed),
+        ("unknown", UnknownStatus),
+    ],
 )
 def test_age_verification(server: MockServer, final: str, expected: type[BaseModel]) -> None:
     server.enqueue(201, "age_verification/pending.json")
@@ -201,6 +239,7 @@ def test_age_verification(server: MockServer, final: str, expected: type[BaseMod
 
     with client(server) as c:
         session = c.bankid_se().age_verification(AgeVerificationRequest(min_age=18))
+        assert isinstance(session, AgeVerificationPending)
         result = c.bankid_se().wait_for_age_verification(session.id, POLL)
 
     assert as_json(session) == without_nulls(fixture("age_verification/pending.json"))
@@ -248,6 +287,7 @@ def test_async_auth_completes(server: MockServer) -> None:
     async def run() -> BaseModel:
         async with async_client(server) as c:
             session = await c.bankid_se().auth(BankIdSeAuthRequest())
+            assert isinstance(session, BankIdSePending)
             return await c.bankid_se().wait_for_auth(session.id, POLL)
 
     result = asyncio.run(run())

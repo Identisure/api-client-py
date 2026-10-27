@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Annotated, Literal, Optional
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Discriminator, Tag
 from pydantic.alias_generators import to_camel
@@ -15,49 +15,49 @@ class _Base(BaseModel):
 
 
 class FrejaAuthRequest(_Base):
-    ssn: Optional[str] = None
-    callback_url: Optional[str] = None
-    min_registration_level: Optional[FrejaRegistrationLevel] = None
-    org_number: Optional[str] = None
-    request_address: Optional[bool] = None
-    ref_id: Optional[str] = None
+    ssn: str | None = None
+    callback_url: str | None = None
+    min_registration_level: FrejaRegistrationLevel | None = None
+    org_number: str | None = None
+    request_address: bool | None = None
+    ref_id: str | None = None
 
 
 class FrejaBackchannelAuthRequest(_Base):
     ssn: str
     country: Country
-    callback_url: Optional[str] = None
-    min_registration_level: Optional[FrejaRegistrationLevel] = None
-    org_number: Optional[str] = None
-    request_address: Optional[bool] = None
-    ref_id: Optional[str] = None
+    callback_url: str | None = None
+    min_registration_level: FrejaRegistrationLevel | None = None
+    org_number: str | None = None
+    request_address: bool | None = None
+    ref_id: str | None = None
 
 
 class FrejaSignRequest(_Base):
     text: str
-    ssn: Optional[str] = None
-    callback_url: Optional[str] = None
-    min_registration_level: Optional[FrejaRegistrationLevel] = None
-    org_number: Optional[str] = None
-    request_address: Optional[bool] = None
-    ref_id: Optional[str] = None
+    ssn: str | None = None
+    callback_url: str | None = None
+    min_registration_level: FrejaRegistrationLevel | None = None
+    org_number: str | None = None
+    request_address: bool | None = None
+    ref_id: str | None = None
 
 
 class FrejaBackchannelSignRequest(_Base):
     ssn: str
     country: Country
     text: str
-    callback_url: Optional[str] = None
-    min_registration_level: Optional[FrejaRegistrationLevel] = None
-    org_number: Optional[str] = None
-    request_address: Optional[bool] = None
-    ref_id: Optional[str] = None
+    callback_url: str | None = None
+    min_registration_level: FrejaRegistrationLevel | None = None
+    org_number: str | None = None
+    request_address: bool | None = None
+    ref_id: str | None = None
 
 
 class FrejaPending(_Base):
     status: Literal["PENDING"]
     id: str
-    ref_id: Optional[str] = None
+    ref_id: str | None = None
     auto_start_token: str
     qr_data: str
 
@@ -65,22 +65,22 @@ class FrejaPending(_Base):
 class FrejaCompleted(_Base):
     status: Literal["COMPLETED"]
     id: str
-    ref_id: Optional[str] = None
+    ref_id: str | None = None
     ssn: str
     country: Country
     name: str
     given_name: str
     surname: str
-    address: Optional[str] = None
-    company_signatory_text: Optional[str] = None
-    authenticated_at: Optional[str] = None
-    signed_at: Optional[str] = None
+    address: str | None = None
+    company_signatory_text: str | None = None
+    authenticated_at: str | None = None
+    signed_at: str | None = None
 
 
 class FrejaFailed(_Base):
     status: Literal["FAILED"]
     id: str
-    ref_id: Optional[str] = None
+    ref_id: str | None = None
     error: ApiErrorCode
 
 

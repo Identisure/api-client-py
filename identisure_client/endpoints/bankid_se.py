@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import time
 import asyncio
+import time
 from typing import TYPE_CHECKING
 
 from pydantic import TypeAdapter
@@ -19,7 +19,7 @@ from identisure_client.models.bankid_se import (
 )
 
 if TYPE_CHECKING:
-    from identisure_client._client import IdentisureClient, AsyncIdentisureClient
+    from identisure_client._client import AsyncIdentisureClient, IdentisureClient
 
 _status_adapter: TypeAdapter[BankIdSeStatus] = TypeAdapter(BankIdSeStatus)
 _verify_adapter: TypeAdapter[BankIdSeVerifyResponse] = TypeAdapter(BankIdSeVerifyResponse)
@@ -27,7 +27,7 @@ _age_adapter: TypeAdapter[AgeVerificationStatus] = TypeAdapter(AgeVerificationSt
 
 
 class BankIdSeEndpoint:
-    def __init__(self, client: "IdentisureClient") -> None:
+    def __init__(self, client: IdentisureClient) -> None:
         self._client = client
 
     def auth(self, req: BankIdSeAuthRequest) -> BankIdSeStatus:
@@ -92,7 +92,9 @@ class BankIdSeEndpoint:
                 raise IdentisureError("poll_timeout", 0, "Poll timed out")
             time.sleep(opts.interval)
 
-    def wait_for_age_verification(self, id: str, opts: PollOptions = PollOptions()) -> AgeVerificationStatus:
+    def wait_for_age_verification(
+        self, id: str, opts: PollOptions = PollOptions()
+    ) -> AgeVerificationStatus:
         deadline = time.monotonic() + opts.timeout
         while True:
             status = self.age_verification_status(id)
@@ -104,7 +106,7 @@ class BankIdSeEndpoint:
 
 
 class AsyncBankIdSeEndpoint:
-    def __init__(self, client: "AsyncIdentisureClient") -> None:
+    def __init__(self, client: AsyncIdentisureClient) -> None:
         self._client = client
 
     async def auth(self, req: BankIdSeAuthRequest) -> BankIdSeStatus:
@@ -169,7 +171,9 @@ class AsyncBankIdSeEndpoint:
                 raise IdentisureError("poll_timeout", 0, "Poll timed out")
             await asyncio.sleep(opts.interval)
 
-    async def wait_for_age_verification(self, id: str, opts: PollOptions = PollOptions()) -> AgeVerificationStatus:
+    async def wait_for_age_verification(
+        self, id: str, opts: PollOptions = PollOptions()
+    ) -> AgeVerificationStatus:
         deadline = time.monotonic() + opts.timeout
         while True:
             status = await self.age_verification_status(id)

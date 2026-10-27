@@ -1,18 +1,16 @@
 from __future__ import annotations
 
-import time
-import asyncio
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Literal, TypeVar
 
 if TYPE_CHECKING:
-    from identisure_client.endpoints.bankid_se import BankIdSeEndpoint, AsyncBankIdSeEndpoint
-    from identisure_client.endpoints.bankid_no import BankIdNoEndpoint, AsyncBankIdNoEndpoint
-    from identisure_client.endpoints.freja import FrejaEndpoint, AsyncFrejaEndpoint
-    from identisure_client.endpoints.mitid import MitIdEndpoint, AsyncMitIdEndpoint
-    from identisure_client.endpoints.ftn import FtnEndpoint, AsyncFtnEndpoint
-    from identisure_client.endpoints.vipps import VippsEndpoint, AsyncVippsEndpoint
-    from identisure_client.endpoints.document import DocumentEndpoint, AsyncDocumentEndpoint
+    from identisure_client.endpoints.bankid_no import AsyncBankIdNoEndpoint, BankIdNoEndpoint
+    from identisure_client.endpoints.bankid_se import AsyncBankIdSeEndpoint, BankIdSeEndpoint
+    from identisure_client.endpoints.document import AsyncDocumentEndpoint, DocumentEndpoint
+    from identisure_client.endpoints.freja import AsyncFrejaEndpoint, FrejaEndpoint
+    from identisure_client.endpoints.ftn import AsyncFtnEndpoint, FtnEndpoint
+    from identisure_client.endpoints.mitid import AsyncMitIdEndpoint, MitIdEndpoint
+    from identisure_client.endpoints.vipps import AsyncVippsEndpoint, VippsEndpoint
 
 import httpx
 from pydantic import TypeAdapter
@@ -179,32 +177,39 @@ class IdentisureClient:
             raise IdentisureError("api", resp.status_code, _error_message(resp))
         return resp.content
 
-    def bankid_se(self) -> "BankIdSeEndpoint":
+    def bankid_se(self) -> BankIdSeEndpoint:
         from identisure_client.endpoints.bankid_se import BankIdSeEndpoint
+
         return BankIdSeEndpoint(self)
 
-    def bankid_no(self) -> "BankIdNoEndpoint":
+    def bankid_no(self) -> BankIdNoEndpoint:
         from identisure_client.endpoints.bankid_no import BankIdNoEndpoint
+
         return BankIdNoEndpoint(self)
 
-    def freja(self) -> "FrejaEndpoint":
+    def freja(self) -> FrejaEndpoint:
         from identisure_client.endpoints.freja import FrejaEndpoint
+
         return FrejaEndpoint(self)
 
-    def mitid(self) -> "MitIdEndpoint":
+    def mitid(self) -> MitIdEndpoint:
         from identisure_client.endpoints.mitid import MitIdEndpoint
+
         return MitIdEndpoint(self)
 
-    def ftn(self) -> "FtnEndpoint":
+    def ftn(self) -> FtnEndpoint:
         from identisure_client.endpoints.ftn import FtnEndpoint
+
         return FtnEndpoint(self)
 
-    def vipps(self) -> "VippsEndpoint":
+    def vipps(self) -> VippsEndpoint:
         from identisure_client.endpoints.vipps import VippsEndpoint
+
         return VippsEndpoint(self)
 
-    def document(self) -> "DocumentEndpoint":
+    def document(self) -> DocumentEndpoint:
         from identisure_client.endpoints.document import DocumentEndpoint
+
         return DocumentEndpoint(self)
 
 
@@ -298,32 +303,39 @@ class AsyncIdentisureClient:
             raise IdentisureError("api", resp.status_code, _error_message(resp))
         return resp.content
 
-    def bankid_se(self) -> "AsyncBankIdSeEndpoint":
+    def bankid_se(self) -> AsyncBankIdSeEndpoint:
         from identisure_client.endpoints.bankid_se import AsyncBankIdSeEndpoint
+
         return AsyncBankIdSeEndpoint(self)
 
-    def bankid_no(self) -> "AsyncBankIdNoEndpoint":
+    def bankid_no(self) -> AsyncBankIdNoEndpoint:
         from identisure_client.endpoints.bankid_no import AsyncBankIdNoEndpoint
+
         return AsyncBankIdNoEndpoint(self)
 
-    def freja(self) -> "AsyncFrejaEndpoint":
+    def freja(self) -> AsyncFrejaEndpoint:
         from identisure_client.endpoints.freja import AsyncFrejaEndpoint
+
         return AsyncFrejaEndpoint(self)
 
-    def mitid(self) -> "AsyncMitIdEndpoint":
+    def mitid(self) -> AsyncMitIdEndpoint:
         from identisure_client.endpoints.mitid import AsyncMitIdEndpoint
+
         return AsyncMitIdEndpoint(self)
 
-    def ftn(self) -> "AsyncFtnEndpoint":
+    def ftn(self) -> AsyncFtnEndpoint:
         from identisure_client.endpoints.ftn import AsyncFtnEndpoint
+
         return AsyncFtnEndpoint(self)
 
-    def vipps(self) -> "AsyncVippsEndpoint":
+    def vipps(self) -> AsyncVippsEndpoint:
         from identisure_client.endpoints.vipps import AsyncVippsEndpoint
+
         return AsyncVippsEndpoint(self)
 
-    def document(self) -> "AsyncDocumentEndpoint":
+    def document(self) -> AsyncDocumentEndpoint:
         from identisure_client.endpoints.document import AsyncDocumentEndpoint
+
         return AsyncDocumentEndpoint(self)
 
 
@@ -341,6 +353,5 @@ def _error_message(resp: httpx.Response) -> str:
         body = resp.json()
     except ValueError:
         return resp.text
-    if isinstance(body, dict) and isinstance(body.get("message"), str):
-        return body["message"]
-    return resp.text
+    message = body.get("message") if isinstance(body, dict) else None
+    return message if isinstance(message, str) else resp.text

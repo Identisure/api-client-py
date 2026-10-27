@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import time
 import asyncio
+import time
 from typing import TYPE_CHECKING
 
 from pydantic import TypeAdapter
@@ -11,21 +11,29 @@ from identisure_client.models.age_verification import AgeVerificationRequest, Ag
 from identisure_client.models.ftn import FtnAuthRequest, FtnStatus
 
 if TYPE_CHECKING:
-    from identisure_client._client import IdentisureClient, AsyncIdentisureClient
+    from identisure_client._client import AsyncIdentisureClient, IdentisureClient
 
 _status_adapter: TypeAdapter[FtnStatus] = TypeAdapter(FtnStatus)
 _age_adapter: TypeAdapter[AgeVerificationStatus] = TypeAdapter(AgeVerificationStatus)
 
 
 class FtnEndpoint:
-    def __init__(self, client: "IdentisureClient") -> None:
+    def __init__(self, client: IdentisureClient) -> None:
         self._client = client
 
     def auth(self, req: FtnAuthRequest) -> FtnStatus:
-        return self._client._post("/v3/ftn/auth", req.model_dump(mode="json", by_alias=True, exclude_none=True), _status_adapter)
+        return self._client._post(
+            "/v3/ftn/auth",
+            req.model_dump(mode="json", by_alias=True, exclude_none=True),
+            _status_adapter,
+        )
 
     def age_verification(self, req: AgeVerificationRequest) -> AgeVerificationStatus:
-        return self._client._post("/v3/ftn/age-verification", req.model_dump(mode="json", by_alias=True, exclude_none=True), _age_adapter)
+        return self._client._post(
+            "/v3/ftn/age-verification",
+            req.model_dump(mode="json", by_alias=True, exclude_none=True),
+            _age_adapter,
+        )
 
     def auth_status(self, id: str) -> FtnStatus:
         return self._client._get(f"/v3/ftn/auth/{id}", _status_adapter)
@@ -49,7 +57,9 @@ class FtnEndpoint:
                 raise IdentisureError("poll_timeout", 0, "Poll timed out")
             time.sleep(opts.interval)
 
-    def wait_for_age_verification(self, id: str, opts: PollOptions = PollOptions()) -> AgeVerificationStatus:
+    def wait_for_age_verification(
+        self, id: str, opts: PollOptions = PollOptions()
+    ) -> AgeVerificationStatus:
         deadline = time.monotonic() + opts.timeout
         while True:
             status = self.age_verification_status(id)
@@ -61,14 +71,22 @@ class FtnEndpoint:
 
 
 class AsyncFtnEndpoint:
-    def __init__(self, client: "AsyncIdentisureClient") -> None:
+    def __init__(self, client: AsyncIdentisureClient) -> None:
         self._client = client
 
     async def auth(self, req: FtnAuthRequest) -> FtnStatus:
-        return await self._client._post("/v3/ftn/auth", req.model_dump(mode="json", by_alias=True, exclude_none=True), _status_adapter)
+        return await self._client._post(
+            "/v3/ftn/auth",
+            req.model_dump(mode="json", by_alias=True, exclude_none=True),
+            _status_adapter,
+        )
 
     async def age_verification(self, req: AgeVerificationRequest) -> AgeVerificationStatus:
-        return await self._client._post("/v3/ftn/age-verification", req.model_dump(mode="json", by_alias=True, exclude_none=True), _age_adapter)
+        return await self._client._post(
+            "/v3/ftn/age-verification",
+            req.model_dump(mode="json", by_alias=True, exclude_none=True),
+            _age_adapter,
+        )
 
     async def auth_status(self, id: str) -> FtnStatus:
         return await self._client._get(f"/v3/ftn/auth/{id}", _status_adapter)
@@ -92,7 +110,9 @@ class AsyncFtnEndpoint:
                 raise IdentisureError("poll_timeout", 0, "Poll timed out")
             await asyncio.sleep(opts.interval)
 
-    async def wait_for_age_verification(self, id: str, opts: PollOptions = PollOptions()) -> AgeVerificationStatus:
+    async def wait_for_age_verification(
+        self, id: str, opts: PollOptions = PollOptions()
+    ) -> AgeVerificationStatus:
         deadline = time.monotonic() + opts.timeout
         while True:
             status = await self.age_verification_status(id)

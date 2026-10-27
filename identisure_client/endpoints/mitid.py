@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import time
 import asyncio
+import time
 from typing import TYPE_CHECKING
 
 from pydantic import TypeAdapter
@@ -16,24 +16,36 @@ from identisure_client.models.mitid import (
 )
 
 if TYPE_CHECKING:
-    from identisure_client._client import IdentisureClient, AsyncIdentisureClient
+    from identisure_client._client import AsyncIdentisureClient, IdentisureClient
 
 _status_adapter: TypeAdapter[MitIdStatus] = TypeAdapter(MitIdStatus)
 _age_adapter: TypeAdapter[AgeVerificationStatus] = TypeAdapter(AgeVerificationStatus)
 
 
 class MitIdEndpoint:
-    def __init__(self, client: "IdentisureClient") -> None:
+    def __init__(self, client: IdentisureClient) -> None:
         self._client = client
 
     def auth(self, req: MitIdAuthRequest) -> MitIdStatus:
-        return self._client._post("/v3/mitid/auth", req.model_dump(mode="json", by_alias=True, exclude_none=True), _status_adapter)
+        return self._client._post(
+            "/v3/mitid/auth",
+            req.model_dump(mode="json", by_alias=True, exclude_none=True),
+            _status_adapter,
+        )
 
     def backchannel_auth(self, req: MitIdBackchannelAuthRequest) -> MitIdStatus:
-        return self._client._post("/v3/mitid/backchannel/auth", req.model_dump(mode="json", by_alias=True, exclude_none=True), _status_adapter)
+        return self._client._post(
+            "/v3/mitid/backchannel/auth",
+            req.model_dump(mode="json", by_alias=True, exclude_none=True),
+            _status_adapter,
+        )
 
     def sign(self, req: MitIdSignRequest) -> MitIdStatus:
-        return self._client._post("/v3/mitid/sign", req.model_dump(mode="json", by_alias=True, exclude_none=True), _status_adapter)
+        return self._client._post(
+            "/v3/mitid/sign",
+            req.model_dump(mode="json", by_alias=True, exclude_none=True),
+            _status_adapter,
+        )
 
     def auth_status(self, id: str) -> MitIdStatus:
         return self._client._get(f"/v3/mitid/auth/{id}", _status_adapter)
@@ -57,7 +69,9 @@ class MitIdEndpoint:
     def cancel_age_verification(self, id: str) -> None:
         return self._client._delete(f"/v3/mitid/age-verification/{id}")
 
-    def wait_for_age_verification(self, id: str, opts: PollOptions = PollOptions()) -> AgeVerificationStatus:
+    def wait_for_age_verification(
+        self, id: str, opts: PollOptions = PollOptions()
+    ) -> AgeVerificationStatus:
         deadline = time.monotonic() + opts.timeout
         while True:
             status = self.age_verification_status(id)
@@ -89,17 +103,29 @@ class MitIdEndpoint:
 
 
 class AsyncMitIdEndpoint:
-    def __init__(self, client: "AsyncIdentisureClient") -> None:
+    def __init__(self, client: AsyncIdentisureClient) -> None:
         self._client = client
 
     async def auth(self, req: MitIdAuthRequest) -> MitIdStatus:
-        return await self._client._post("/v3/mitid/auth", req.model_dump(mode="json", by_alias=True, exclude_none=True), _status_adapter)
+        return await self._client._post(
+            "/v3/mitid/auth",
+            req.model_dump(mode="json", by_alias=True, exclude_none=True),
+            _status_adapter,
+        )
 
     async def backchannel_auth(self, req: MitIdBackchannelAuthRequest) -> MitIdStatus:
-        return await self._client._post("/v3/mitid/backchannel/auth", req.model_dump(mode="json", by_alias=True, exclude_none=True), _status_adapter)
+        return await self._client._post(
+            "/v3/mitid/backchannel/auth",
+            req.model_dump(mode="json", by_alias=True, exclude_none=True),
+            _status_adapter,
+        )
 
     async def sign(self, req: MitIdSignRequest) -> MitIdStatus:
-        return await self._client._post("/v3/mitid/sign", req.model_dump(mode="json", by_alias=True, exclude_none=True), _status_adapter)
+        return await self._client._post(
+            "/v3/mitid/sign",
+            req.model_dump(mode="json", by_alias=True, exclude_none=True),
+            _status_adapter,
+        )
 
     async def auth_status(self, id: str) -> MitIdStatus:
         return await self._client._get(f"/v3/mitid/auth/{id}", _status_adapter)
@@ -123,7 +149,9 @@ class AsyncMitIdEndpoint:
     async def cancel_age_verification(self, id: str) -> None:
         return await self._client._delete(f"/v3/mitid/age-verification/{id}")
 
-    async def wait_for_age_verification(self, id: str, opts: PollOptions = PollOptions()) -> AgeVerificationStatus:
+    async def wait_for_age_verification(
+        self, id: str, opts: PollOptions = PollOptions()
+    ) -> AgeVerificationStatus:
         deadline = time.monotonic() + opts.timeout
         while True:
             status = await self.age_verification_status(id)

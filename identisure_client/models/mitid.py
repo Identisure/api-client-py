@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Annotated, Literal, Optional
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Discriminator, Tag
 from pydantic.alias_generators import to_camel
@@ -13,33 +13,33 @@ class _Base(BaseModel):
 
 
 class MitIdAuthRequest(_Base):
-    redirect_url: Optional[str] = None
-    reference_text: Optional[str] = None
-    request_phone: Optional[bool] = None
-    request_email: Optional[bool] = None
-    request_address: Optional[bool] = None
-    ref_id: Optional[str] = None
+    redirect_url: str | None = None
+    reference_text: str | None = None
+    request_phone: bool | None = None
+    request_email: bool | None = None
+    request_address: bool | None = None
+    ref_id: str | None = None
 
 
 class MitIdBackchannelAuthRequest(_Base):
     ssn: str
     binding_message: str
-    callback_url: Optional[str] = None
-    ref_id: Optional[str] = None
+    callback_url: str | None = None
+    ref_id: str | None = None
 
 
 class MitIdSignRequest(_Base):
     text: str
-    redirect_url: Optional[str] = None
-    ref_id: Optional[str] = None
+    redirect_url: str | None = None
+    ref_id: str | None = None
 
 
 class MitIdPending(_Base):
     status: Literal["PENDING"]
     id: str
-    ref_id: Optional[str] = None
-    url: Optional[str] = None
-    binding_message: Optional[str] = None
+    ref_id: str | None = None
+    url: str | None = None
+    binding_message: str | None = None
 
 
 class MitIdSignResult(_Base):
@@ -49,26 +49,26 @@ class MitIdSignResult(_Base):
 class MitIdCompleted(_Base):
     status: Literal["COMPLETED"]
     id: str
-    ref_id: Optional[str] = None
-    ssn: Optional[str] = None
+    ref_id: str | None = None
+    ssn: str | None = None
     name: str
     given_name: str
     surname: str
-    phone: Optional[str] = None
-    email: Optional[str] = None
-    address: Optional[str] = None
-    birth_date: Optional[str] = None
-    pid: Optional[str] = None
-    bank_id: Optional[str] = None
-    sign_result: Optional[MitIdSignResult] = None
-    authenticated_at: Optional[str] = None
-    signed_at: Optional[str] = None
+    phone: str | None = None
+    email: str | None = None
+    address: str | None = None
+    birth_date: str | None = None
+    pid: str | None = None
+    bank_id: str | None = None
+    sign_result: MitIdSignResult | None = None
+    authenticated_at: str | None = None
+    signed_at: str | None = None
 
 
 class MitIdFailed(_Base):
     status: Literal["FAILED"]
     id: str
-    ref_id: Optional[str] = None
+    ref_id: str | None = None
     error: ApiErrorCode
 
 
