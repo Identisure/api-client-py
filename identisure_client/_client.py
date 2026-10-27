@@ -17,8 +17,8 @@ from pydantic import TypeAdapter
 
 T = TypeVar("T")
 
-_PRODUCTION_URL = "https://api.identisure.com"
-_STAGING_URL = "https://stgapi.identisure.com"
+_PRODUCTION_URL = "https://api.idkollen.se"
+_STAGING_URL = "https://stgapi.idkollen.se"
 
 
 class IdentisureError(Exception):
