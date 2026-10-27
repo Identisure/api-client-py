@@ -6,24 +6,24 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Literal, TypeVar
 
 if TYPE_CHECKING:
-    from idkollen_client.endpoints.bankid_se import BankIdSeEndpoint, AsyncBankIdSeEndpoint
-    from idkollen_client.endpoints.bankid_no import BankIdNoEndpoint, AsyncBankIdNoEndpoint
-    from idkollen_client.endpoints.freja import FrejaEndpoint, AsyncFrejaEndpoint
-    from idkollen_client.endpoints.mitid import MitIdEndpoint, AsyncMitIdEndpoint
-    from idkollen_client.endpoints.ftn import FtnEndpoint, AsyncFtnEndpoint
-    from idkollen_client.endpoints.vipps import VippsEndpoint, AsyncVippsEndpoint
-    from idkollen_client.endpoints.document import DocumentEndpoint, AsyncDocumentEndpoint
+    from identisure_client.endpoints.bankid_se import BankIdSeEndpoint, AsyncBankIdSeEndpoint
+    from identisure_client.endpoints.bankid_no import BankIdNoEndpoint, AsyncBankIdNoEndpoint
+    from identisure_client.endpoints.freja import FrejaEndpoint, AsyncFrejaEndpoint
+    from identisure_client.endpoints.mitid import MitIdEndpoint, AsyncMitIdEndpoint
+    from identisure_client.endpoints.ftn import FtnEndpoint, AsyncFtnEndpoint
+    from identisure_client.endpoints.vipps import VippsEndpoint, AsyncVippsEndpoint
+    from identisure_client.endpoints.document import DocumentEndpoint, AsyncDocumentEndpoint
 
 import httpx
 from pydantic import TypeAdapter
 
 T = TypeVar("T")
 
-_PRODUCTION_URL = "https://api.idkollen.se"
-_STAGING_URL = "https://stgapi.idkollen.se"
+_PRODUCTION_URL = "https://api.identisure.com"
+_STAGING_URL = "https://stgapi.identisure.com"
 
 
-class IdkollenError(Exception):
+class IdentisureError(Exception):
     def __init__(
         self,
         code: Literal["http", "api", "poll_timeout", "json"],
@@ -42,36 +42,36 @@ class PollOptions:
     timeout: float = 300.0
 
 
-class IdkollenClientBuilder:
+class IdentisureClientBuilder:
     def __init__(self, client_id: str, client_secret: str) -> None:
         self._client_id = client_id
         self._client_secret = client_secret
         self._base_url: str | None = None
-        self._user_agent = "idkollen-client-py/0.1.0"
+        self._user_agent = "identisure-client-py/0.1.0"
         self._timeout = 30.0
 
-    def environment(self, env: Literal["production", "staging"]) -> IdkollenClientBuilder:
+    def environment(self, env: Literal["production", "staging"]) -> IdentisureClientBuilder:
         if env == "staging":
             self._base_url = _STAGING_URL
         else:
             self._base_url = _PRODUCTION_URL
         return self
 
-    def base_url(self, url: str) -> IdkollenClientBuilder:
+    def base_url(self, url: str) -> IdentisureClientBuilder:
         self._base_url = url.rstrip("/")
         return self
 
-    def user_agent(self, ua: str) -> IdkollenClientBuilder:
+    def user_agent(self, ua: str) -> IdentisureClientBuilder:
         self._user_agent = ua
         return self
 
-    def timeout(self, seconds: float) -> IdkollenClientBuilder:
+    def timeout(self, seconds: float) -> IdentisureClientBuilder:
         """Set the timeout for each HTTP request, in seconds. Must be positive. Default: 30."""
         self._timeout = seconds
         return self
 
-    def build(self) -> IdkollenClient:
-        return IdkollenClient(
+    def build(self) -> IdentisureClient:
+        return IdentisureClient(
             base_url=self._base_url or _PRODUCTION_URL,
             client_id=self._client_id,
             client_secret=self._client_secret,
@@ -79,8 +79,8 @@ class IdkollenClientBuilder:
             timeout=self._timeout,
         )
 
-    def build_async(self) -> AsyncIdkollenClient:
-        return AsyncIdkollenClient(
+    def build_async(self) -> AsyncIdentisureClient:
+        return AsyncIdentisureClient(
             base_url=self._base_url or _PRODUCTION_URL,
             client_id=self._client_id,
             client_secret=self._client_secret,
@@ -89,7 +89,7 @@ class IdkollenClientBuilder:
         )
 
 
-class IdkollenClient:
+class IdentisureClient:
     def __init__(
         self,
         base_url: str,
@@ -107,7 +107,7 @@ class IdkollenClient:
     def close(self) -> None:
         self._http.close()
 
-    def __enter__(self) -> IdkollenClient:
+    def __enter__(self) -> IdentisureClient:
         return self
 
     def __exit__(self, *exc_info: object) -> None:
@@ -127,7 +127,7 @@ class IdkollenClient:
                 headers=self._headers(),
             )
         except httpx.HTTPError as exc:
-            raise IdkollenError("http", 0, str(exc)) from exc
+            raise IdentisureError("http", 0, str(exc)) from exc
         return _parse_response(resp, adapter)
 
     def _post(self, path: str, body: Any, adapter: TypeAdapter[T]) -> T:
@@ -139,7 +139,7 @@ class IdkollenClient:
                 headers=self._headers(),
             )
         except httpx.HTTPError as exc:
-            raise IdkollenError("http", 0, str(exc)) from exc
+            raise IdentisureError("http", 0, str(exc)) from exc
         return _parse_response(resp, adapter)
 
     def _delete(self, path: str) -> None:
@@ -150,9 +150,9 @@ class IdkollenClient:
                 headers=self._headers(),
             )
         except httpx.HTTPError as exc:
-            raise IdkollenError("http", 0, str(exc)) from exc
+            raise IdentisureError("http", 0, str(exc)) from exc
         if not resp.is_success:
-            raise IdkollenError("api", resp.status_code, _error_message(resp))
+            raise IdentisureError("api", resp.status_code, _error_message(resp))
 
     def _post_multipart(self, path: str, files: dict[str, Any], adapter: TypeAdapter[T]) -> T:
         try:
@@ -163,7 +163,7 @@ class IdkollenClient:
                 headers=self._headers(),
             )
         except httpx.HTTPError as exc:
-            raise IdkollenError("http", 0, str(exc)) from exc
+            raise IdentisureError("http", 0, str(exc)) from exc
         return _parse_response(resp, adapter)
 
     def _get_bytes(self, path: str) -> bytes:
@@ -174,41 +174,41 @@ class IdkollenClient:
                 headers=self._headers(),
             )
         except httpx.HTTPError as exc:
-            raise IdkollenError("http", 0, str(exc)) from exc
+            raise IdentisureError("http", 0, str(exc)) from exc
         if not resp.is_success:
-            raise IdkollenError("api", resp.status_code, _error_message(resp))
+            raise IdentisureError("api", resp.status_code, _error_message(resp))
         return resp.content
 
     def bankid_se(self) -> "BankIdSeEndpoint":
-        from idkollen_client.endpoints.bankid_se import BankIdSeEndpoint
+        from identisure_client.endpoints.bankid_se import BankIdSeEndpoint
         return BankIdSeEndpoint(self)
 
     def bankid_no(self) -> "BankIdNoEndpoint":
-        from idkollen_client.endpoints.bankid_no import BankIdNoEndpoint
+        from identisure_client.endpoints.bankid_no import BankIdNoEndpoint
         return BankIdNoEndpoint(self)
 
     def freja(self) -> "FrejaEndpoint":
-        from idkollen_client.endpoints.freja import FrejaEndpoint
+        from identisure_client.endpoints.freja import FrejaEndpoint
         return FrejaEndpoint(self)
 
     def mitid(self) -> "MitIdEndpoint":
-        from idkollen_client.endpoints.mitid import MitIdEndpoint
+        from identisure_client.endpoints.mitid import MitIdEndpoint
         return MitIdEndpoint(self)
 
     def ftn(self) -> "FtnEndpoint":
-        from idkollen_client.endpoints.ftn import FtnEndpoint
+        from identisure_client.endpoints.ftn import FtnEndpoint
         return FtnEndpoint(self)
 
     def vipps(self) -> "VippsEndpoint":
-        from idkollen_client.endpoints.vipps import VippsEndpoint
+        from identisure_client.endpoints.vipps import VippsEndpoint
         return VippsEndpoint(self)
 
     def document(self) -> "DocumentEndpoint":
-        from idkollen_client.endpoints.document import DocumentEndpoint
+        from identisure_client.endpoints.document import DocumentEndpoint
         return DocumentEndpoint(self)
 
 
-class AsyncIdkollenClient:
+class AsyncIdentisureClient:
     def __init__(
         self,
         base_url: str,
@@ -226,7 +226,7 @@ class AsyncIdkollenClient:
     async def aclose(self) -> None:
         await self._http.aclose()
 
-    async def __aenter__(self) -> AsyncIdkollenClient:
+    async def __aenter__(self) -> AsyncIdentisureClient:
         return self
 
     async def __aexit__(self, *exc_info: object) -> None:
@@ -246,7 +246,7 @@ class AsyncIdkollenClient:
                 headers=self._headers(),
             )
         except httpx.HTTPError as exc:
-            raise IdkollenError("http", 0, str(exc)) from exc
+            raise IdentisureError("http", 0, str(exc)) from exc
         return _parse_response(resp, adapter)
 
     async def _post(self, path: str, body: Any, adapter: TypeAdapter[T]) -> T:
@@ -258,7 +258,7 @@ class AsyncIdkollenClient:
                 headers=self._headers(),
             )
         except httpx.HTTPError as exc:
-            raise IdkollenError("http", 0, str(exc)) from exc
+            raise IdentisureError("http", 0, str(exc)) from exc
         return _parse_response(resp, adapter)
 
     async def _delete(self, path: str) -> None:
@@ -269,9 +269,9 @@ class AsyncIdkollenClient:
                 headers=self._headers(),
             )
         except httpx.HTTPError as exc:
-            raise IdkollenError("http", 0, str(exc)) from exc
+            raise IdentisureError("http", 0, str(exc)) from exc
         if not resp.is_success:
-            raise IdkollenError("api", resp.status_code, _error_message(resp))
+            raise IdentisureError("api", resp.status_code, _error_message(resp))
 
     async def _post_multipart(self, path: str, files: dict[str, Any], adapter: TypeAdapter[T]) -> T:
         try:
@@ -282,7 +282,7 @@ class AsyncIdkollenClient:
                 headers=self._headers(),
             )
         except httpx.HTTPError as exc:
-            raise IdkollenError("http", 0, str(exc)) from exc
+            raise IdentisureError("http", 0, str(exc)) from exc
         return _parse_response(resp, adapter)
 
     async def _get_bytes(self, path: str) -> bytes:
@@ -293,37 +293,37 @@ class AsyncIdkollenClient:
                 headers=self._headers(),
             )
         except httpx.HTTPError as exc:
-            raise IdkollenError("http", 0, str(exc)) from exc
+            raise IdentisureError("http", 0, str(exc)) from exc
         if not resp.is_success:
-            raise IdkollenError("api", resp.status_code, _error_message(resp))
+            raise IdentisureError("api", resp.status_code, _error_message(resp))
         return resp.content
 
     def bankid_se(self) -> "AsyncBankIdSeEndpoint":
-        from idkollen_client.endpoints.bankid_se import AsyncBankIdSeEndpoint
+        from identisure_client.endpoints.bankid_se import AsyncBankIdSeEndpoint
         return AsyncBankIdSeEndpoint(self)
 
     def bankid_no(self) -> "AsyncBankIdNoEndpoint":
-        from idkollen_client.endpoints.bankid_no import AsyncBankIdNoEndpoint
+        from identisure_client.endpoints.bankid_no import AsyncBankIdNoEndpoint
         return AsyncBankIdNoEndpoint(self)
 
     def freja(self) -> "AsyncFrejaEndpoint":
-        from idkollen_client.endpoints.freja import AsyncFrejaEndpoint
+        from identisure_client.endpoints.freja import AsyncFrejaEndpoint
         return AsyncFrejaEndpoint(self)
 
     def mitid(self) -> "AsyncMitIdEndpoint":
-        from idkollen_client.endpoints.mitid import AsyncMitIdEndpoint
+        from identisure_client.endpoints.mitid import AsyncMitIdEndpoint
         return AsyncMitIdEndpoint(self)
 
     def ftn(self) -> "AsyncFtnEndpoint":
-        from idkollen_client.endpoints.ftn import AsyncFtnEndpoint
+        from identisure_client.endpoints.ftn import AsyncFtnEndpoint
         return AsyncFtnEndpoint(self)
 
     def vipps(self) -> "AsyncVippsEndpoint":
-        from idkollen_client.endpoints.vipps import AsyncVippsEndpoint
+        from identisure_client.endpoints.vipps import AsyncVippsEndpoint
         return AsyncVippsEndpoint(self)
 
     def document(self) -> "AsyncDocumentEndpoint":
-        from idkollen_client.endpoints.document import AsyncDocumentEndpoint
+        from identisure_client.endpoints.document import AsyncDocumentEndpoint
         return AsyncDocumentEndpoint(self)
 
 
@@ -332,8 +332,8 @@ def _parse_response(resp: httpx.Response, adapter: TypeAdapter[T]) -> T:
         try:
             return adapter.validate_json(resp.content)
         except Exception as exc:
-            raise IdkollenError("json", 0, str(exc)) from exc
-    raise IdkollenError("api", resp.status_code, _error_message(resp))
+            raise IdentisureError("json", 0, str(exc)) from exc
+    raise IdentisureError("api", resp.status_code, _error_message(resp))
 
 
 def _error_message(resp: httpx.Response) -> str:

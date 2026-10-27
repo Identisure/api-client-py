@@ -4,16 +4,16 @@ from typing import TYPE_CHECKING
 
 from pydantic import TypeAdapter
 
-from idkollen_client.models.document import DocumentUploadResponse
+from identisure_client.models.document import DocumentUploadResponse
 
 if TYPE_CHECKING:
-    from idkollen_client._client import IdkollenClient, AsyncIdkollenClient
+    from identisure_client._client import IdentisureClient, AsyncIdentisureClient
 
 _upload_adapter: TypeAdapter[DocumentUploadResponse] = TypeAdapter(DocumentUploadResponse)
 
 
 class DocumentEndpoint:
-    def __init__(self, client: "IdkollenClient") -> None:
+    def __init__(self, client: "IdentisureClient") -> None:
         self._client = client
 
     def upload(self, data: bytes, filename: str, mime_type: str = "application/pdf") -> DocumentUploadResponse:
@@ -25,7 +25,7 @@ class DocumentEndpoint:
 
 
 class AsyncDocumentEndpoint:
-    def __init__(self, client: "AsyncIdkollenClient") -> None:
+    def __init__(self, client: "AsyncIdentisureClient") -> None:
         self._client = client
 
     async def upload(self, data: bytes, filename: str, mime_type: str = "application/pdf") -> DocumentUploadResponse:

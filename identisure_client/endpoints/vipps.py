@@ -6,17 +6,17 @@ from typing import TYPE_CHECKING
 
 from pydantic import TypeAdapter
 
-from idkollen_client._client import IdkollenError, PollOptions
-from idkollen_client.models.vipps import VippsAuthRequest, VippsBackchannelAuthRequest, VippsStatus
+from identisure_client._client import IdentisureError, PollOptions
+from identisure_client.models.vipps import VippsAuthRequest, VippsBackchannelAuthRequest, VippsStatus
 
 if TYPE_CHECKING:
-    from idkollen_client._client import IdkollenClient, AsyncIdkollenClient
+    from identisure_client._client import IdentisureClient, AsyncIdentisureClient
 
 _status_adapter: TypeAdapter[VippsStatus] = TypeAdapter(VippsStatus)
 
 
 class VippsEndpoint:
-    def __init__(self, client: "IdkollenClient") -> None:
+    def __init__(self, client: "IdentisureClient") -> None:
         self._client = client
 
     def auth(self, req: VippsAuthRequest) -> VippsStatus:
@@ -38,12 +38,12 @@ class VippsEndpoint:
             if status.status != "PENDING":
                 return status
             if time.monotonic() >= deadline:
-                raise IdkollenError("poll_timeout", 0, "Poll timed out")
+                raise IdentisureError("poll_timeout", 0, "Poll timed out")
             time.sleep(opts.interval)
 
 
 class AsyncVippsEndpoint:
-    def __init__(self, client: "AsyncIdkollenClient") -> None:
+    def __init__(self, client: "AsyncIdentisureClient") -> None:
         self._client = client
 
     async def auth(self, req: VippsAuthRequest) -> VippsStatus:
@@ -65,5 +65,5 @@ class AsyncVippsEndpoint:
             if status.status != "PENDING":
                 return status
             if time.monotonic() >= deadline:
-                raise IdkollenError("poll_timeout", 0, "Poll timed out")
+                raise IdentisureError("poll_timeout", 0, "Poll timed out")
             await asyncio.sleep(opts.interval)

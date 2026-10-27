@@ -6,9 +6,9 @@ from typing import TYPE_CHECKING
 
 from pydantic import TypeAdapter
 
-from idkollen_client._client import IdkollenError, PollOptions
-from idkollen_client.models.age_verification import AgeVerificationRequest, AgeVerificationStatus
-from idkollen_client.models.bankid_se import (
+from identisure_client._client import IdentisureError, PollOptions
+from identisure_client.models.age_verification import AgeVerificationRequest, AgeVerificationStatus
+from identisure_client.models.bankid_se import (
     BankIdSeAuthRequest,
     BankIdSePhoneAuthRequest,
     BankIdSePhoneSignRequest,
@@ -19,7 +19,7 @@ from idkollen_client.models.bankid_se import (
 )
 
 if TYPE_CHECKING:
-    from idkollen_client._client import IdkollenClient, AsyncIdkollenClient
+    from identisure_client._client import IdentisureClient, AsyncIdentisureClient
 
 _status_adapter: TypeAdapter[BankIdSeStatus] = TypeAdapter(BankIdSeStatus)
 _verify_adapter: TypeAdapter[BankIdSeVerifyResponse] = TypeAdapter(BankIdSeVerifyResponse)
@@ -27,7 +27,7 @@ _age_adapter: TypeAdapter[AgeVerificationStatus] = TypeAdapter(AgeVerificationSt
 
 
 class BankIdSeEndpoint:
-    def __init__(self, client: "IdkollenClient") -> None:
+    def __init__(self, client: "IdentisureClient") -> None:
         self._client = client
 
     def auth(self, req: BankIdSeAuthRequest) -> BankIdSeStatus:
@@ -79,7 +79,7 @@ class BankIdSeEndpoint:
             if status.status != "PENDING":
                 return status
             if time.monotonic() >= deadline:
-                raise IdkollenError("poll_timeout", 0, "Poll timed out")
+                raise IdentisureError("poll_timeout", 0, "Poll timed out")
             time.sleep(opts.interval)
 
     def wait_for_sign(self, id: str, opts: PollOptions = PollOptions()) -> BankIdSeStatus:
@@ -89,7 +89,7 @@ class BankIdSeEndpoint:
             if status.status != "PENDING":
                 return status
             if time.monotonic() >= deadline:
-                raise IdkollenError("poll_timeout", 0, "Poll timed out")
+                raise IdentisureError("poll_timeout", 0, "Poll timed out")
             time.sleep(opts.interval)
 
     def wait_for_age_verification(self, id: str, opts: PollOptions = PollOptions()) -> AgeVerificationStatus:
@@ -99,12 +99,12 @@ class BankIdSeEndpoint:
             if status.status != "PENDING":
                 return status
             if time.monotonic() >= deadline:
-                raise IdkollenError("poll_timeout", 0, "Poll timed out")
+                raise IdentisureError("poll_timeout", 0, "Poll timed out")
             time.sleep(opts.interval)
 
 
 class AsyncBankIdSeEndpoint:
-    def __init__(self, client: "AsyncIdkollenClient") -> None:
+    def __init__(self, client: "AsyncIdentisureClient") -> None:
         self._client = client
 
     async def auth(self, req: BankIdSeAuthRequest) -> BankIdSeStatus:
@@ -156,7 +156,7 @@ class AsyncBankIdSeEndpoint:
             if status.status != "PENDING":
                 return status
             if time.monotonic() >= deadline:
-                raise IdkollenError("poll_timeout", 0, "Poll timed out")
+                raise IdentisureError("poll_timeout", 0, "Poll timed out")
             await asyncio.sleep(opts.interval)
 
     async def wait_for_sign(self, id: str, opts: PollOptions = PollOptions()) -> BankIdSeStatus:
@@ -166,7 +166,7 @@ class AsyncBankIdSeEndpoint:
             if status.status != "PENDING":
                 return status
             if time.monotonic() >= deadline:
-                raise IdkollenError("poll_timeout", 0, "Poll timed out")
+                raise IdentisureError("poll_timeout", 0, "Poll timed out")
             await asyncio.sleep(opts.interval)
 
     async def wait_for_age_verification(self, id: str, opts: PollOptions = PollOptions()) -> AgeVerificationStatus:
@@ -176,5 +176,5 @@ class AsyncBankIdSeEndpoint:
             if status.status != "PENDING":
                 return status
             if time.monotonic() >= deadline:
-                raise IdkollenError("poll_timeout", 0, "Poll timed out")
+                raise IdentisureError("poll_timeout", 0, "Poll timed out")
             await asyncio.sleep(opts.interval)

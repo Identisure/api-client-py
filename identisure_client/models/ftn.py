@@ -5,40 +5,29 @@ from typing import Annotated, Literal, Optional
 from pydantic import BaseModel, ConfigDict, Discriminator, Tag
 from pydantic.alias_generators import to_camel
 
-from idkollen_client.models.common import ApiErrorCode, UnknownStatus, status_tag
+from identisure_client.models.common import ApiErrorCode, UnknownStatus, status_tag
 
 
 class _Base(BaseModel):
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
 
 
-class VippsAuthRequest(_Base):
+class FtnAuthRequest(_Base):
     redirect_url: Optional[str] = None
-    request_ssn: Optional[bool] = None
     request_phone: Optional[bool] = None
     request_email: Optional[bool] = None
     request_address: Optional[bool] = None
     ref_id: Optional[str] = None
-    app_callback_uri: Optional[str] = None
 
 
-class VippsBackchannelAuthRequest(_Base):
-    phone: str
-    request_ssn: Optional[bool] = None
-    request_email: Optional[bool] = None
-    request_address: Optional[bool] = None
-    callback_url: Optional[str] = None
-    ref_id: Optional[str] = None
-
-
-class VippsPending(_Base):
+class FtnPending(_Base):
     status: Literal["PENDING"]
     id: str
     ref_id: Optional[str] = None
-    url: Optional[str] = None
+    url: str
 
 
-class VippsCompleted(_Base):
+class FtnCompleted(_Base):
     status: Literal["COMPLETED"]
     id: str
     ref_id: Optional[str] = None
@@ -52,20 +41,21 @@ class VippsCompleted(_Base):
     birth_date: Optional[str] = None
     pid: Optional[str] = None
     bank_id: Optional[str] = None
+    bank_name: Optional[str] = None
     authenticated_at: Optional[str] = None
 
 
-class VippsFailed(_Base):
+class FtnFailed(_Base):
     status: Literal["FAILED"]
     id: str
     ref_id: Optional[str] = None
     error: ApiErrorCode
 
 
-VippsStatus = Annotated[
-    Annotated[VippsPending, Tag("PENDING")]
-    | Annotated[VippsCompleted, Tag("COMPLETED")]
-    | Annotated[VippsFailed, Tag("FAILED")]
+FtnStatus = Annotated[
+    Annotated[FtnPending, Tag("PENDING")]
+    | Annotated[FtnCompleted, Tag("COMPLETED")]
+    | Annotated[FtnFailed, Tag("FAILED")]
     | Annotated[UnknownStatus, Tag("UNKNOWN")],
     Discriminator(status_tag),
 ]

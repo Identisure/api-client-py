@@ -6,9 +6,9 @@ from typing import TYPE_CHECKING
 
 from pydantic import TypeAdapter
 
-from idkollen_client._client import IdkollenError, PollOptions
-from idkollen_client.models.age_verification import AgeVerificationRequest, AgeVerificationStatus
-from idkollen_client.models.bankid_no import (
+from identisure_client._client import IdentisureError, PollOptions
+from identisure_client.models.age_verification import AgeVerificationRequest, AgeVerificationStatus
+from identisure_client.models.bankid_no import (
     BankIdNoAuthRequest,
     BankIdNoBackchannelAuthRequest,
     BankIdNoSignRequest,
@@ -16,14 +16,14 @@ from idkollen_client.models.bankid_no import (
 )
 
 if TYPE_CHECKING:
-    from idkollen_client._client import IdkollenClient, AsyncIdkollenClient
+    from identisure_client._client import IdentisureClient, AsyncIdentisureClient
 
 _status_adapter: TypeAdapter[BankIdNoStatus] = TypeAdapter(BankIdNoStatus)
 _age_adapter: TypeAdapter[AgeVerificationStatus] = TypeAdapter(AgeVerificationStatus)
 
 
 class BankIdNoEndpoint:
-    def __init__(self, client: "IdkollenClient") -> None:
+    def __init__(self, client: "IdentisureClient") -> None:
         self._client = client
 
     def auth(self, req: BankIdNoAuthRequest) -> BankIdNoStatus:
@@ -64,7 +64,7 @@ class BankIdNoEndpoint:
             if status.status != "PENDING":
                 return status
             if time.monotonic() >= deadline:
-                raise IdkollenError("poll_timeout", 0, "Poll timed out")
+                raise IdentisureError("poll_timeout", 0, "Poll timed out")
             time.sleep(opts.interval)
 
     def wait_for_auth(self, id: str, opts: PollOptions = PollOptions()) -> BankIdNoStatus:
@@ -74,7 +74,7 @@ class BankIdNoEndpoint:
             if status.status != "PENDING":
                 return status
             if time.monotonic() >= deadline:
-                raise IdkollenError("poll_timeout", 0, "Poll timed out")
+                raise IdentisureError("poll_timeout", 0, "Poll timed out")
             time.sleep(opts.interval)
 
     def wait_for_sign(self, id: str, opts: PollOptions = PollOptions()) -> BankIdNoStatus:
@@ -84,12 +84,12 @@ class BankIdNoEndpoint:
             if status.status != "PENDING":
                 return status
             if time.monotonic() >= deadline:
-                raise IdkollenError("poll_timeout", 0, "Poll timed out")
+                raise IdentisureError("poll_timeout", 0, "Poll timed out")
             time.sleep(opts.interval)
 
 
 class AsyncBankIdNoEndpoint:
-    def __init__(self, client: "AsyncIdkollenClient") -> None:
+    def __init__(self, client: "AsyncIdentisureClient") -> None:
         self._client = client
 
     async def auth(self, req: BankIdNoAuthRequest) -> BankIdNoStatus:
@@ -130,7 +130,7 @@ class AsyncBankIdNoEndpoint:
             if status.status != "PENDING":
                 return status
             if time.monotonic() >= deadline:
-                raise IdkollenError("poll_timeout", 0, "Poll timed out")
+                raise IdentisureError("poll_timeout", 0, "Poll timed out")
             await asyncio.sleep(opts.interval)
 
     async def wait_for_auth(self, id: str, opts: PollOptions = PollOptions()) -> BankIdNoStatus:
@@ -140,7 +140,7 @@ class AsyncBankIdNoEndpoint:
             if status.status != "PENDING":
                 return status
             if time.monotonic() >= deadline:
-                raise IdkollenError("poll_timeout", 0, "Poll timed out")
+                raise IdentisureError("poll_timeout", 0, "Poll timed out")
             await asyncio.sleep(opts.interval)
 
     async def wait_for_sign(self, id: str, opts: PollOptions = PollOptions()) -> BankIdNoStatus:
@@ -150,5 +150,5 @@ class AsyncBankIdNoEndpoint:
             if status.status != "PENDING":
                 return status
             if time.monotonic() >= deadline:
-                raise IdkollenError("poll_timeout", 0, "Poll timed out")
+                raise IdentisureError("poll_timeout", 0, "Poll timed out")
             await asyncio.sleep(opts.interval)

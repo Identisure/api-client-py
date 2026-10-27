@@ -1,12 +1,12 @@
-from idkollen_client.models.common import ApiErrorCode, CallInitiator, Country, Language, UnknownStatus
-from idkollen_client.models.age_verification import (
+from identisure_client.models.common import ApiErrorCode, CallInitiator, Country, Language, UnknownStatus
+from identisure_client.models.age_verification import (
     AgeVerificationCompleted,
     AgeVerificationFailed,
     AgeVerificationPending,
     AgeVerificationRequest,
     AgeVerificationStatus,
 )
-from idkollen_client.models.bankid_se import (
+from identisure_client.models.bankid_se import (
     BankIdSeAuthRequest,
     BankIdSeCompleted,
     BankIdSeDevice,
@@ -20,7 +20,7 @@ from idkollen_client.models.bankid_se import (
     BankIdSeVerifyRequest,
     BankIdSeVerifyResponse,
 )
-from idkollen_client.models.bankid_no import (
+from identisure_client.models.bankid_no import (
     BankIdNoAuthRequest,
     BankIdNoBackchannelAuthRequest,
     BankIdNoCompleted,
@@ -31,7 +31,7 @@ from idkollen_client.models.bankid_no import (
     BankIdNoSignResult,
     BankIdNoStatus,
 )
-from idkollen_client.models.freja import (
+from identisure_client.models.freja import (
     FrejaAuthRequest,
     FrejaBackchannelAuthRequest,
     FrejaBackchannelSignRequest,
@@ -42,7 +42,7 @@ from idkollen_client.models.freja import (
     FrejaSignRequest,
     FrejaStatus,
 )
-from idkollen_client.models.mitid import (
+from identisure_client.models.mitid import (
     MitIdAuthRequest,
     MitIdBackchannelAuthRequest,
     MitIdCompleted,
@@ -52,14 +52,14 @@ from idkollen_client.models.mitid import (
     MitIdSignResult,
     MitIdStatus,
 )
-from idkollen_client.models.ftn import (
+from identisure_client.models.ftn import (
     FtnAuthRequest,
     FtnCompleted,
     FtnFailed,
     FtnPending,
     FtnStatus,
 )
-from idkollen_client.models.vipps import (
+from identisure_client.models.vipps import (
     VippsAuthRequest,
     VippsBackchannelAuthRequest,
     VippsCompleted,
@@ -67,7 +67,7 @@ from idkollen_client.models.vipps import (
     VippsPending,
     VippsStatus,
 )
-from idkollen_client.models.document import DocumentUploadResponse
+from identisure_client.models.document import DocumentUploadResponse
 
 __all__ = [
     "ApiErrorCode", "CallInitiator", "Country", "Language", "UnknownStatus",

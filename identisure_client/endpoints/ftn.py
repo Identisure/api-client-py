@@ -6,19 +6,19 @@ from typing import TYPE_CHECKING
 
 from pydantic import TypeAdapter
 
-from idkollen_client._client import IdkollenError, PollOptions
-from idkollen_client.models.age_verification import AgeVerificationRequest, AgeVerificationStatus
-from idkollen_client.models.ftn import FtnAuthRequest, FtnStatus
+from identisure_client._client import IdentisureError, PollOptions
+from identisure_client.models.age_verification import AgeVerificationRequest, AgeVerificationStatus
+from identisure_client.models.ftn import FtnAuthRequest, FtnStatus
 
 if TYPE_CHECKING:
-    from idkollen_client._client import IdkollenClient, AsyncIdkollenClient
+    from identisure_client._client import IdentisureClient, AsyncIdentisureClient
 
 _status_adapter: TypeAdapter[FtnStatus] = TypeAdapter(FtnStatus)
 _age_adapter: TypeAdapter[AgeVerificationStatus] = TypeAdapter(AgeVerificationStatus)
 
 
 class FtnEndpoint:
-    def __init__(self, client: "IdkollenClient") -> None:
+    def __init__(self, client: "IdentisureClient") -> None:
         self._client = client
 
     def auth(self, req: FtnAuthRequest) -> FtnStatus:
@@ -46,7 +46,7 @@ class FtnEndpoint:
             if status.status != "PENDING":
                 return status
             if time.monotonic() >= deadline:
-                raise IdkollenError("poll_timeout", 0, "Poll timed out")
+                raise IdentisureError("poll_timeout", 0, "Poll timed out")
             time.sleep(opts.interval)
 
     def wait_for_age_verification(self, id: str, opts: PollOptions = PollOptions()) -> AgeVerificationStatus:
@@ -56,12 +56,12 @@ class FtnEndpoint:
             if status.status != "PENDING":
                 return status
             if time.monotonic() >= deadline:
-                raise IdkollenError("poll_timeout", 0, "Poll timed out")
+                raise IdentisureError("poll_timeout", 0, "Poll timed out")
             time.sleep(opts.interval)
 
 
 class AsyncFtnEndpoint:
-    def __init__(self, client: "AsyncIdkollenClient") -> None:
+    def __init__(self, client: "AsyncIdentisureClient") -> None:
         self._client = client
 
     async def auth(self, req: FtnAuthRequest) -> FtnStatus:
@@ -89,7 +89,7 @@ class AsyncFtnEndpoint:
             if status.status != "PENDING":
                 return status
             if time.monotonic() >= deadline:
-                raise IdkollenError("poll_timeout", 0, "Poll timed out")
+                raise IdentisureError("poll_timeout", 0, "Poll timed out")
             await asyncio.sleep(opts.interval)
 
     async def wait_for_age_verification(self, id: str, opts: PollOptions = PollOptions()) -> AgeVerificationStatus:
@@ -99,5 +99,5 @@ class AsyncFtnEndpoint:
             if status.status != "PENDING":
                 return status
             if time.monotonic() >= deadline:
-                raise IdkollenError("poll_timeout", 0, "Poll timed out")
+                raise IdentisureError("poll_timeout", 0, "Poll timed out")
             await asyncio.sleep(opts.interval)

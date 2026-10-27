@@ -9,9 +9,9 @@ import pytest
 from pydantic import BaseModel
 
 from conftest import MockServer, fixture
-from idkollen_client import IdkollenClientBuilder, IdkollenError, PollOptions
-from idkollen_client._client import AsyncIdkollenClient, IdkollenClient
-from idkollen_client.models import (
+from identisure_client import IdentisureClientBuilder, IdentisureError, PollOptions
+from identisure_client._client import AsyncIdentisureClient, IdentisureClient
+from identisure_client.models import (
     AgeVerificationCompleted,
     AgeVerificationFailed,
     AgeVerificationRequest,
@@ -42,7 +42,7 @@ from idkollen_client.models import (
     VippsCompleted,
     VippsFailed,
 )
-from idkollen_client.models.document import DocumentUploadResponse
+from identisure_client.models.document import DocumentUploadResponse
 
 POLL = PollOptions(interval=0.01, timeout=5.0)
 AUTHORIZATION = "Basic " + base64.b64encode(b"client-id:client-secret").decode()
@@ -75,12 +75,12 @@ PROVIDERS = [
 SIGNING_PROVIDERS = [p for p in PROVIDERS if p.sign_request is not None]
 
 
-def client(server: MockServer) -> IdkollenClient:
-    return IdkollenClientBuilder("client-id", "client-secret").base_url(server.url).build()
+def client(server: MockServer) -> IdentisureClient:
+    return IdentisureClientBuilder("client-id", "client-secret").base_url(server.url).build()
 
 
-def async_client(server: MockServer) -> AsyncIdkollenClient:
-    return IdkollenClientBuilder("client-id", "client-secret").base_url(server.url).build_async()
+def async_client(server: MockServer) -> AsyncIdentisureClient:
+    return IdentisureClientBuilder("client-id", "client-secret").base_url(server.url).build_async()
 
 
 def as_json(model: BaseModel) -> dict[str, Any]:
@@ -232,7 +232,7 @@ def test_document_upload(server: MockServer) -> None:
 def test_api_error(server: MockServer) -> None:
     server.enqueue(400, "error.json")
 
-    with client(server) as c, pytest.raises(IdkollenError) as info:
+    with client(server) as c, pytest.raises(IdentisureError) as info:
         c.ftn().auth(FtnAuthRequest())
 
     assert info.value.code == "api"
