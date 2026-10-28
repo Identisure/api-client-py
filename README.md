@@ -18,6 +18,8 @@
 
 API client for the [Identisure](https://developers.identisure.com) REST API. Supports both synchronous and async usage via [httpx](https://www.python-httpx.org/) and [Pydantic](https://docs.pydantic.dev/) models.
 
+Documentation: [identisure.github.io/api-client-py](https://identisure.github.io/api-client-py)
+
 ## Requirements
 
 Python 3.10 or later.
